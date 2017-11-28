@@ -1,0 +1,28 @@
+{
+    "name": "easyswoole/cache",
+    "description": "Simple caching library for easySwoole",
+    "keywords": [
+        "cache",
+        "redis",
+        "memcached"
+    ],
+    "homepage": "http://www.easyswoole.com",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "evalor",
+            "email": "master@evalor.cn",
+            "homepage": "http://www.evalor.cn",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "psr/simple-cache": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "easySwoole\\Cache\\": "src"
+        }
+    }
+}
