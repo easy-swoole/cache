@@ -60,6 +60,8 @@ $RedisDriver->setHost('127.0.0.1');
 $RedisDriver->setPort(6379);
 $RedisDriver->setPassword('AuthPass');
 $RedisDriver->setPrefix('Cache:');
+$RedisDriver->setDatabase(1);
+$RedisDriver->setReconnect(false);
 
 Cache::init($RedisDriver);
 Cache::set('CacheName', 'CacheValues');

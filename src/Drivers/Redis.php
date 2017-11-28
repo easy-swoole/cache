@@ -106,6 +106,8 @@ class Redis extends AbstractDriver
      */
     public function get($key, $default = null)
     {
+        if ($this->handler === null) $this->connect();
+
         try {
             $value = $this->handler->get($this->prefix . $key);
         } catch (\Exception $exception) {
@@ -135,6 +137,8 @@ class Redis extends AbstractDriver
      */
     public function set($key, $value, $ttl = null)
     {
+        if ($this->handler === null) $this->connect();
+
         if (!$ttl) $ttl = 0;
         $value = $this->pack($value);
         try {
@@ -168,6 +172,8 @@ class Redis extends AbstractDriver
      */
     public function delete($key)
     {
+        if ($this->handler === null) $this->connect();
+
         try {
             $this->handler->delete($this->prefix . $key);
         } catch (\Exception $exception) {
@@ -186,6 +192,8 @@ class Redis extends AbstractDriver
      */
     public function clear()
     {
+        if ($this->handler === null) $this->connect();
+
         try {
             $this->handler->delete($this->handler->keys($this->prefix . '*'));
         } catch (\Exception $exception) {
