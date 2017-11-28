@@ -227,8 +227,8 @@ class Redis extends AbstractDriver
     {
         if (!$this->reconnect) return false;
         if (!$e instanceof \RedisException) return false;
-        $info = ['server went away'];
-        $error = $e->getMessage();
+        $info = ['server went away', 'connection closed'];
+        $error = strtolower($e->getMessage());
         foreach ($info as $msg) {
             if (false !== stripos($error, $msg)) {
                 return true;
