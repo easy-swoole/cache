@@ -1,14 +1,24 @@
 <?php
 
+/*
+ * // +----------------------------------------------------------------------
+ * // | easySwoole framework unit
+ * // +----------------------------------------------------------------------
+ * // | WebSite: https://www.easyswoole.com
+ * // +----------------------------------------------------------------------
+ * // | Welcome Join QQGroup 633921431
+ * // +----------------------------------------------------------------------
+ */
+
 namespace easySwoole\Cache\Connector;
 
-use \DateInterval;
+use DateInterval;
 use easySwoole\Cache\Exception\CacheException;
 
 /**
- * Class Memcache
+ * Class Memcache.
+ *
  * @author : evalor <master@evalor.cn>
- * @package easySwoole\Cache\Connector
  */
 class Memcache extends AbstractCache
 {
@@ -26,7 +36,9 @@ class Memcache extends AbstractCache
 
     /**
      * Memcache constructor.
+     *
      * @param array $options
+     *
      * @throws CacheException
      */
     public function __construct($options = [])
@@ -41,13 +53,14 @@ class Memcache extends AbstractCache
     }
 
     /**
-     * Connection to memcache service
+     * Connection to memcache service.
+     *
      * @author : evalor <master@evalor.cn>
      */
     protected function connect()
     {
         if (!is_object(self::$instance)) {
-            self::$instance = new \Memcache;
+            self::$instance = new \Memcache();
 
             // Cluster connections
             $hosts = explode(',', $this->options['host']);
@@ -57,7 +70,7 @@ class Memcache extends AbstractCache
             }
 
             // connection establishment
-            foreach ((array)$hosts as $i => $host) {
+            foreach ((array) $hosts as $i => $host) {
                 $port = isset($ports[$i]) ? $ports[$i] : $ports[0];
                 $this->options['timeout'] > 0 ?
                     self::$instance->addServer($host, $port, $this->options['persistent'], 1, $this->options['timeout']) :
@@ -68,10 +81,13 @@ class Memcache extends AbstractCache
 
     /**
      * Increment the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to increment, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function inc($name, $step = 1)
     {
@@ -79,28 +95,36 @@ class Memcache extends AbstractCache
         if (self::$instance->get($key)) {
             return self::$instance->increment($key, $step);
         }
+
         return self::$instance->set($key, $step);
     }
 
     /**
      * Decrement the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to decrement, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean|int
+     *
+     * @return bool|int
      */
     public function dec($name, $step = 1)
     {
         $key   = $this->getCacheKey($name);
         $value = self::$instance->get($key) - $step;
+
         return self::$instance->set($key, $value);
     }
 
     /**
      * Fetches a value from the cache and delete it.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @return mixed
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function pull($name, $default = null)
@@ -108,6 +132,7 @@ class Memcache extends AbstractCache
         $result = $this->get($name, false);
         if ($result) {
             $this->delete($name);
+
             return $result;
         } else {
             return $default;
@@ -116,10 +141,13 @@ class Memcache extends AbstractCache
 
     /**
      * If the name does not exist, insert value.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
-     * @return boolean
+     *
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
+     * @return bool
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function remember($name, $value, $ttl = null)
@@ -133,25 +161,32 @@ class Memcache extends AbstractCache
 
     /**
      * Fetches a value from the cache.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return mixed
      */
     public function get($name, $default = null)
     {
         $this->connect();
         $result = self::$instance->get($this->getCacheKey($name));
+
         return false !== $result ? $this->unPackData($result) : $default;
     }
 
     /**
      * Persists data in the cache, uniquely referenced by a name with an optional expiration TTL time.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function set($name, $value, $ttl = null)
     {
@@ -169,38 +204,49 @@ class Memcache extends AbstractCache
 
     /**
      * Delete an item from the cache by its unique key.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function delete($name)
     {
         $this->connect();
         $key = $this->getCacheKey($name);
+
         return self::$instance->delete($key);
     }
 
     /**
      * Determines whether an item is present in the cache.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function has($name)
     {
         $this->connect();
         $key = $this->getCacheKey($name);
+
         return self::$instance->get($key) ? true : false;
     }
 
     /**
      * Wipes clean the entire cache's keys.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function clear()
     {
         $this->connect();
+
         return self::$instance->flush();
     }
 }
