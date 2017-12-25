@@ -3,6 +3,10 @@
 namespace easySwoole\Cache;
 
 use easySwoole\Cache\Connector\Files;
+use easySwoole\Cache\Connector\Memcache;
+use easySwoole\Cache\Connector\Memcached;
+use easySwoole\Cache\Connector\Redis;
+use easySwoole\Cache\Exception\CacheException;
 
 /**
  * easySwoole Cache Manager
@@ -27,10 +31,27 @@ class Cache
      * Cache handle initialize
      * Cache constructor.
      * @param $connector
+     * @throws CacheException
      */
     static function init($connector = null)
     {
-        if (is_null($connector)) $connector = new Files;
+        $classMap  = [Files::class, Redis::class, Memcache::class, Memcached::class];
+        $driverMap = ['files', 'redis', 'memcache', 'memcached'];
+
+        if (is_null($connector)) {
+            $connector = new Files;
+        } elseif (is_array($connector)) {
+            $driver = $connector['driver'];
+            if (!in_array($driver, $driverMap)) throw new CacheException('unknown cache driver: ' . $driver);
+            $class     = 'easySwoole\\Cache\\Connector\\' . ucfirst($driver);
+            $connector = new $class($connector);
+        } elseif (is_object($connector)) {
+            $className = get_class($connector);
+            if (!in_array($className, $classMap)) throw new CacheException('unknown cache driver: ' . $className);
+        } else {
+            throw new CacheException('cache driver options invalid');
+        }
+
         self::$connector = $connector;
     }
 
@@ -40,6 +61,7 @@ class Cache
      * @param $arguments
      * @author : evalor <master@evalor.cn>
      * @return mixed
+     * @throws CacheException
      */
     static function __callStatic($name, $arguments)
     {

@@ -158,3 +158,38 @@ function frameInitialized()
     Cache::init($memcachedConnector);
 }
 ```
+
+### 传入配置直接实例化
+
+可以将配置保存到 `Conf\Config.php` 文件，然后载入配置进行初始化，从`1.1.0`版本开始支持在配置中指定`driver`选项，自动识别驱动进行配置，以文件驱动为例，参照如下代码进行配置
+
+```php
+private function userConf()
+{
+    return array(
+        'cache' => [
+            'driver'        => 'files', // 驱动名称
+            'expire'        => 0,       // 缓存过期时间
+            'cache_subdir'  => true,    // 开启子目录存放
+            'prefix'        => '',      // 缓存文件后缀名
+            'path'          => '',      // 缓存文件储存路径
+            'hash_type'     => 'md5',   // 文件名的哈希方式
+            'data_compress' => false,   // 启用缓存内容压缩
+            'thread_safe'   => false,   // 线程安全模式
+            'lock_timeout'  => 3000,    // 文件最长锁定时间(ms)
+        ]
+    );
+}
+```
+
+在`框架初始化完成`事件中读取配置文件进行初始化
+
+```php
+use easySwoole\Cache\Cache;
+
+function frameInitialized()
+{
+    $CacheOptions = Config::getInstance()->getConf('cache');
+    Cache::init($CacheOptions);
+}
+```
