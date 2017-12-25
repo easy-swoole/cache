@@ -65,18 +65,24 @@ Cache::remember('name', 'value', 10);
 - 线程安全模式是指操作读写之前会进行上锁 避免脏读
 
 ```php
-$fileSystemOptions = [
-    'expire'        => 0,     // 缓存过期时间
-    'cache_subdir'  => true,  // 开启子目录存放
-    'prefix'        => '',    // 缓存文件后缀名
-    'path'          => '',    // 缓存文件储存路径
-    'hash_type'     => 'md5', // 文件名的哈希方式
-    'data_compress' => false, // 启用缓存内容压缩
-    'thread_safe'   => false, // 线程安全模式
-    'lock_timeout'  => 3000,  // 文件最长锁定时间(ms)
-];
+use easySwoole\Cache\Cache;
+use easySwoole\Cache\Connector\Files;
 
-Cache::init($fileSystemOptions);
+function frameInitialized()
+{
+    $fileSystemOptions = [
+        'expire'        => 0,     // 缓存过期时间
+        'cache_subdir'  => true,  // 开启子目录存放
+        'prefix'        => '',    // 缓存文件后缀名
+        'path'          => '',    // 缓存文件储存路径
+        'hash_type'     => 'md5', // 文件名的哈希方式
+        'data_compress' => false, // 启用缓存内容压缩
+        'thread_safe'   => false, // 线程安全模式
+        'lock_timeout'  => 3000,  // 文件最长锁定时间(ms)
+    ];
+    $FilesConnector = new Files($fileSystemOptions);
+    Cache::init($FilesConnector);
+}
 ```
 
 ### Redis驱动
@@ -85,18 +91,24 @@ Cache::init($fileSystemOptions);
 - 设置了全局的`expire`，在Set操作的时候没有指定过期时间，所有key都会以全局为准
 
 ```php
-$redisOptions = [
-    'host'       => '127.0.0.1',  // Redis服务器
-    'port'       => 6379,         // Redis端口
-    'password'   => '',           // Redis密码
-    'select'     => 0,            // Redis库序号
-    'timeout'    => 0,            // 连接超时
-    'expire'     => 0,            // 默认缓存超时
-    'persistent' => false,        // 是否使用长连接
-    'prefix'     => 'cache:',     // 缓存前缀
-];
+use easySwoole\Cache\Cache;
+use easySwoole\Cache\Connector\Redis;
 
-Cache::init($redisOptions);
+function frameInitialized()
+{
+    $redisOptions = [
+        'host'       => '127.0.0.1',  // Redis服务器
+        'port'       => 6379,         // Redis端口
+        'password'   => '',           // Redis密码
+        'select'     => 0,            // Redis库序号
+        'timeout'    => 0,            // 连接超时
+        'expire'     => 0,            // 默认缓存超时
+        'persistent' => false,        // 是否使用长连接
+        'prefix'     => 'cache:',     // 缓存前缀
+    ];
+    $redisConnector = new Redis($redisOptions);
+    Cache::init($redisConnector);
+}
 ```
 
 ### Memcache驱动
@@ -104,16 +116,22 @@ Cache::init($redisOptions);
 - 支持集群连接，集群模式下的`host`和`port`用逗号分开，上下对应即可
 
 ```php
-$memcacheOptions = [
-    'host'       => '127.0.0.1',  // Memcache服务器
-    'port'       => 11211,        // Memcache端口
-    'expire'     => 0,            // 默认缓存过期时间
-    'timeout'    => 0,            // 连接超时
-    'persistent' => true,         // 是否启用长连接
-    'prefix'     => '',           // 缓存前缀
-];
+use easySwoole\Cache\Cache;
+use easySwoole\Cache\Connector\Memcache;
 
-Cache::init($memcacheOptions);
+function frameInitialized()
+{
+    $memcacheOptions = [
+        'host'       => '127.0.0.1',  // Memcache服务器
+        'port'       => 11211,        // Memcache端口
+        'expire'     => 0,            // 默认缓存过期时间
+        'timeout'    => 0,            // 连接超时
+        'persistent' => true,         // 是否启用长连接
+        'prefix'     => '',           // 缓存前缀
+    ];
+    $memcacheConnector = new Memcache($memcacheOptions);
+    Cache::init($memcacheConnector);
+}
 ```
 
 ### Memcached驱动
@@ -121,16 +139,22 @@ Cache::init($memcacheOptions);
 - 同样支持集群连接，如果memcache编译的时候启用了SASL支持，则支持账号密码认证
 
 ```php
-$memcachedOptions = [
-    'host'     => '127.0.0.1',  // Memcache服务器
-    'port'     => 11211,        // Memcache端口
-    'expire'   => 0,            // 默认缓存过期时间
-    'timeout'  => 0,            // 超时时间（单位：毫秒）
-    'prefix'   => '',           // 缓存后缀
-    'username' => '',           // Memcache账号
-    'password' => '',           // Memcache密码
-    'option'   => [],           // Memcache连接配置
-];
+use easySwoole\Cache\Cache;
+use easySwoole\Cache\Connector\Memcached;
 
-Cache::init($memcachedOptions);
+function frameInitialized()
+{
+    $memcachedOptions = [
+        'host'     => '127.0.0.1',  // Memcache服务器
+        'port'     => 11211,        // Memcache端口
+        'expire'   => 0,            // 默认缓存过期时间
+        'timeout'  => 0,            // 超时时间（单位：毫秒）
+        'prefix'   => '',           // 缓存后缀
+        'username' => '',           // Memcache账号
+        'password' => '',           // Memcache密码
+        'option'   => [],           // Memcache连接配置
+    ];
+    $memcachedConnector = new Memcached($memcacheOptions);
+    Cache::init($memcachedConnector);
+}
 ```
