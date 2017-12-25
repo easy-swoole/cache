@@ -1,13 +1,23 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace easySwoole\Cache\Connector;
 
 use easySwoole\Cache\Exception\CacheException;
 
 /**
- * Class Files
+ * Class Files.
+ *
  * @author : evalor <master@evalor.cn>
- * @package easySwoole\Cache\Connector
  */
 class Files extends AbstractCache
 {
@@ -26,7 +36,9 @@ class Files extends AbstractCache
 
     /**
      * Files constructor.
+     *
      * @param array $options
+     *
      * @throws CacheException
      */
     public function __construct($options = [])
@@ -37,17 +49,20 @@ class Files extends AbstractCache
         }
 
         if ($this->options['path'] == '') {
-            $this->options['path'] = sys_get_temp_dir() . $DS;
+            $this->options['path'] = sys_get_temp_dir().$DS;
         }
-        $this->options['path'] = rtrim($this->options['path'], $DS) . $DS . 'esCache' . $DS;
+        $this->options['path'] = rtrim($this->options['path'], $DS).$DS.'esCache'.$DS;
         $this->init();
     }
 
     /**
-     * Init cache file path
+     * Init cache file path.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return bool
+     *
      * @throws CacheException
+     *
+     * @return bool
      */
     private function init()
     {
@@ -58,16 +73,19 @@ class Files extends AbstractCache
         }
 
         if (!is_writeable($this->options['path'])) {
-            throw new CacheException('Cache Path: ' . $this->options['path'] . ' is not writable');
+            throw new CacheException('Cache Path: '.$this->options['path'].' is not writable');
         }
 
         return false;
     }
 
     /**
-     * Get the full path of the cache file
+     * Get the full path of the cache file.
+     *
      * @param $name
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return string
      */
     private function getCacheFileName($name)
@@ -75,14 +93,14 @@ class Files extends AbstractCache
         $name = hash($this->options['hash_type'], $name);
 
         if ($this->options['cache_subdir']) {
-            $name = substr($name, 0, 2) . DIRECTORY_SEPARATOR . substr($name, 2);
+            $name = substr($name, 0, 2).DIRECTORY_SEPARATOR.substr($name, 2);
         }
 
         if ($this->options['prefix']) {
-            $name = $this->options['prefix'] . DIRECTORY_SEPARATOR . $name;
+            $name = $this->options['prefix'].DIRECTORY_SEPARATOR.$name;
         }
 
-        $filename = $this->options['path'] . $name . '.php';
+        $filename = $this->options['path'].$name.'.php';
         $dir      = dirname($filename);
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
@@ -92,9 +110,12 @@ class Files extends AbstractCache
     }
 
     /**
-     * Delete cache file
+     * Delete cache file.
+     *
      * @param $path
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return bool
      */
     private function unlink($path)
@@ -103,9 +124,12 @@ class Files extends AbstractCache
     }
 
     /**
-     * Read the contents of the file
+     * Read the contents of the file.
+     *
      * @param $name
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return bool|string
      */
     private function getContent($name)
@@ -120,6 +144,7 @@ class Files extends AbstractCache
             flock($fd, LOCK_SH);
             $fc = fread($fd, filesize($filename));
             fclose($fd);
+
             return $fc;
         } else {
             return file_get_contents($filename);
@@ -127,10 +152,13 @@ class Files extends AbstractCache
     }
 
     /**
-     * Write content into a file
+     * Write content into a file.
+     *
      * @param $name
      * @param $content
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return bool|int
      */
     private function setContent($name, $content)
@@ -142,6 +170,7 @@ class Files extends AbstractCache
             flock($fd, LOCK_EX);
             $fr = fwrite($fd, $content);
             fclose($fd);
+
             return $fr;
         } else {
             return file_put_contents($filename, $content);
@@ -150,9 +179,12 @@ class Files extends AbstractCache
 
     /**
      * Fetches a value from the cache.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return mixed
      */
     public function get($name, $default = null)
@@ -166,10 +198,11 @@ class Files extends AbstractCache
         $this->expire = null;
 
         if ($content !== false) {
-            $expire = (int)substr($content, 8, 12);
+            $expire = (int) substr($content, 8, 12);
 
             if (0 != $expire && time() > filemtime($filename) + $expire) {
                 $this->unlink($filename);
+
                 return $default;
             }
 
@@ -180,6 +213,7 @@ class Files extends AbstractCache
             if ($this->options['data_compress'] && function_exists('gzcompress')) {
                 $content = gzuncompress($content);
             }
+
             return $this->unPackData($content);
         } else {
             return $default;
@@ -188,11 +222,14 @@ class Files extends AbstractCache
 
     /**
      * Persists data in the cache, uniquely referenced by a name with an optional expiration TTL time.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *
+     * @param string                 $name  The name of the item to store.
+     * @param mixed                  $value The value of the item to store, must be serializable.
+     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function set($name, $value, $ttl = null)
     {
@@ -207,7 +244,7 @@ class Files extends AbstractCache
             $data = gzcompress($data, 3);
         }
 
-        $data   = "<?php\n//" . sprintf('%012d', $ttl) . "\n exit();?>\n" . $data;
+        $data   = "<?php\n//".sprintf('%012d', $ttl)."\n exit();?>\n".$data;
         $result = $this->setContent($name, $data);
 
         return boolval($result);
@@ -215,9 +252,12 @@ class Files extends AbstractCache
 
     /**
      * Delete an item from the cache by its unique key.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function delete($name)
     {
@@ -226,9 +266,12 @@ class Files extends AbstractCache
 
     /**
      * Determines whether an item is present in the cache.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function has($name)
     {
@@ -237,18 +280,20 @@ class Files extends AbstractCache
 
     /**
      * Wipes clean the entire cache's keys.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function clear()
     {
         $cachePath   = $this->options['path'];
-        $cachePrefix = $this->options['prefix'] ? $this->options['prefix'] . DIRECTORY_SEPARATOR : '';
-        $files       = (array)glob($cachePath . $cachePrefix . '*');
+        $cachePrefix = $this->options['prefix'] ? $this->options['prefix'].DIRECTORY_SEPARATOR : '';
+        $files       = (array) glob($cachePath.$cachePrefix.'*');
 
         foreach ($files as $file) {
             if (is_dir($file)) {
-                $matches = glob($file . '/*.php');
+                $matches = glob($file.'/*.php');
                 if (is_array($matches)) {
                     array_map('unlink', $matches);
                 }
@@ -263,10 +308,13 @@ class Files extends AbstractCache
 
     /**
      * Increment the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to increment, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function inc($name, $step = null)
     {
@@ -277,15 +325,19 @@ class Files extends AbstractCache
             $value  = $step;
             $expire = 0;
         }
+
         return $this->set($name, $value, $expire) ? $value : false;
     }
 
     /**
      * Decrement the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to decrement, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function dec($name, $step = null)
     {
@@ -296,14 +348,18 @@ class Files extends AbstractCache
             $value  = -$step;
             $expire = 0;
         }
+
         return $this->set($name, $value, $expire) ? $value : false;
     }
 
     /**
      * Fetches a value from the cache and delete it.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @return mixed
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function pull($name, $default = null)
@@ -311,6 +367,7 @@ class Files extends AbstractCache
         $result = $this->get($name, false);
         if ($result) {
             $this->delete($name);
+
             return $result;
         } else {
             return $default;
@@ -319,10 +376,13 @@ class Files extends AbstractCache
 
     /**
      * If the name does not exist, insert value.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
-     * @return boolean
+     *
+     * @param string                 $name  The name of the item to store.
+     * @param mixed                  $value The value of the item to store, must be serializable.
+     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
+     * @return bool
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function remember($name, $value, $ttl = null)

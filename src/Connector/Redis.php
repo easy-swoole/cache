@@ -1,14 +1,24 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace easySwoole\Cache\Connector;
 
-use \DateInterval;
+use DateInterval;
 use easySwoole\Cache\Exception\CacheException;
 
 /**
- * Class Redis
+ * Class Redis.
+ *
  * @author : evalor <master@evalor.cn>
- * @package easySwoole\Cache\Connector
  */
 class Redis extends AbstractCache
 {
@@ -28,7 +38,9 @@ class Redis extends AbstractCache
 
     /**
      * Redis constructor.
+     *
      * @param array $options
+     *
      * @throws CacheException
      */
     public function __construct($options = [])
@@ -43,7 +55,8 @@ class Redis extends AbstractCache
     }
 
     /**
-     * Connection to redis service
+     * Connection to redis service.
+     *
      * @author : evalor <master@evalor.cn>
      */
     protected function connect()
@@ -51,7 +64,7 @@ class Redis extends AbstractCache
         if (!is_object(self::$instance)) {
             $func = $this->options['persistent'] ? 'pconnect' : 'connect';
 
-            self::$instance = new \Redis;
+            self::$instance = new \Redis();
             self::$instance->$func($this->options['host'], $this->options['port'], $this->options['timeout']);
 
             if ('' != $this->options['password']) {
@@ -65,10 +78,13 @@ class Redis extends AbstractCache
 
     /**
      * Increment the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to increment, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function inc($name, $step = 1)
     {
@@ -77,10 +93,13 @@ class Redis extends AbstractCache
 
     /**
      * Decrement the value of the storage.
-     * @param string $name The name of the item in store.
+     *
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to decrement, must be an integer.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function dec($name, $step = 1)
     {
@@ -89,9 +108,12 @@ class Redis extends AbstractCache
 
     /**
      * Fetches a value from the cache and delete it.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @return mixed
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function pull($name, $default = null)
@@ -99,6 +121,7 @@ class Redis extends AbstractCache
         $result = $this->get($name, false);
         if ($result) {
             $this->delete($name);
+
             return $result;
         } else {
             return $default;
@@ -107,10 +130,13 @@ class Redis extends AbstractCache
 
     /**
      * If the name does not exist, insert value.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
-     * @return boolean
+     *
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
+     * @return bool
+     *
      * @author : evalor <master@evalor.cn>
      */
     public function remember($name, $value, $ttl = null)
@@ -124,9 +150,12 @@ class Redis extends AbstractCache
 
     /**
      * Fetches a value from the cache.
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     *
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
+     *
      * @author : evalor <master@evalor.cn>
+     *
      * @return mixed
      */
     public function get($name, $default = null)
@@ -136,16 +165,20 @@ class Redis extends AbstractCache
         if (is_null($value) || false === $value) {
             return $default;
         }
+
         return $this->unPackData($value);
     }
 
     /**
      * Persists data in the cache, uniquely referenced by a name with an optional expiration TTL time.
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function set($name, $value, $ttl = null)
     {
@@ -169,9 +202,12 @@ class Redis extends AbstractCache
 
     /**
      * Delete an item from the cache by its unique key.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function delete($name)
     {
@@ -180,9 +216,12 @@ class Redis extends AbstractCache
 
     /**
      * Determines whether an item is present in the cache.
+     *
      * @param string $name The name of the item in store.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean
+     *
+     * @return bool
      */
     public function has($name)
     {
@@ -191,15 +230,18 @@ class Redis extends AbstractCache
 
     /**
      * Wipes clean the entire cache's keys.
+     *
      * @author : evalor <master@evalor.cn>
-     * @return boolean True on success and false on failure.
+     *
+     * @return bool True on success and false on failure.
      */
     public function clear()
     {
-        $keys = self::$instance->keys($this->options['prefix'] . '*');
+        $keys = self::$instance->keys($this->options['prefix'].'*');
         if ($keys) {
             self::$instance->del(...$keys);
         }
+
         return true;
     }
 }
