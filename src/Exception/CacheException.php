@@ -1,12 +1,22 @@
 <?php
 
+/*
+ * // +----------------------------------------------------------------------
+ * // | easySwoole framework unit
+ * // +----------------------------------------------------------------------
+ * // | WebSite: https://www.easyswoole.com
+ * // +----------------------------------------------------------------------
+ * // | Welcome Join QQGroup 633921431
+ * // +----------------------------------------------------------------------
+ */
+
 namespace easySwoole\Cache\Exception;
 
 /**
  * Cache Exception Handle
- * Class CacheException
+ * Class CacheException.
+ *
  * @author : evalor <master@evalor.cn>
- * @package easySwoole\Cache\Exception
  */
 class CacheException extends \Exception
 {
