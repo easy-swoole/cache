@@ -1,6 +1,11 @@
 
-es-cache
+easySwoole Cache
 ------
+[![StyleCI](https://styleci.io/repos/110963506/shield?style=flat&branch=master)](https://styleci.io/repos/110963506)
+[![Latest Stable Version](https://poser.pugx.org/easyswoole/cache/version)](https://packagist.org/packages/easyswoole/cache)
+[![Total Downloads](https://poser.pugx.org/easyswoole/cache/downloads)](https://packagist.org/packages/easyswoole/cache)
+[![Latest Unstable Version](https://poser.pugx.org/easyswoole/cache/v/unstable)](//packagist.org/packages/easyswoole/cache)
+[![License](https://poser.pugx.org/easyswoole/cache/license)](https://packagist.org/packages/easyswoole/cache)
 
 一个轻量级的缓存实现，目前已支持 `Redis` `Memcache` `Memcached` `File` 四种储存模式
 
