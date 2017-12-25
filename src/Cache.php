@@ -1,51 +1,41 @@
 <?php
-// +----------------------------------------------------------------------
-// | easySwoole [ use swoole easily just like echo "hello world" ]
-// +----------------------------------------------------------------------
-// | WebSite: https://www.easyswoole.com
-// +----------------------------------------------------------------------
-// | Welcome Join QQGroup 633921431
-// +----------------------------------------------------------------------
 
 namespace easySwoole\Cache;
 
-use easySwoole\Cache\Drivers\Files;
-use easySwoole\Cache\Drivers\Redis;
-use easySwoole\Cache\Drivers\AbstractDriver;
+use easySwoole\Cache\Connector\Files;
 
 /**
+ * easySwoole Cache Manager
  * Class Cache
  * @author : evalor <master@evalor.cn>
  * @package easySwoole\Cache
- * @method AbstractDriver clear() static 清空缓存
- * @method AbstractDriver delete($key) static 删除缓存
- * @method AbstractDriver has($key) static 缓存是否存在
- * @method AbstractDriver get($key, $default = null) static 获取缓存
- * @method AbstractDriver set($key, $value, $ttl = null) static 设置缓存
- * @method AbstractDriver getMultiple($keys, $default = null) static 批量设置
- * @method AbstractDriver setMultiple($values, $ttl = null) static 批量获取
- * @method AbstractDriver deleteMultiple($keys) static 批量删除
+ * @method static inc              ($key, $value = null)
+ * @method static dec              ($key, $value = null)
+ * @method static pull             ($key, $default = null)
+ * @method static remember         ($key, $value, $ttl = null)
+ * @method static get              ($key, $default = null)
+ * @method static set              ($key, $value, $ttl = null)
+ * @method static delete           ($key)
+ * @method static clear            ()
+ * @method static has              ($key)
  */
 class Cache
 {
-    protected static $handle = null;
+    protected static $connector;
 
     /**
-     * 初始化缓存
-     * @param Files|Redis $handle
-     * @author : evalor <master@evalor.cn>
+     * Cache handle initialize
+     * Cache constructor.
+     * @param $connector
      */
-    static function init($handle = null)
+    static function init($connector = null)
     {
-        if ($handle === null) {
-            self::$handle = new Files();
-        } else {
-            self::$handle = $handle;
-        }
+        if (is_null($connector)) $connector = new Files;
+        self::$connector = $connector;
     }
 
     /**
-     * 调用缓存驱动方法
+     * Call connector method
      * @param $name
      * @param $arguments
      * @author : evalor <master@evalor.cn>
@@ -53,7 +43,7 @@ class Cache
      */
     static function __callStatic($name, $arguments)
     {
-        if (self::$handle === null) self::init();
-        return self::$handle->$name(...$arguments);
+        if (!is_object(self::$connector)) self::init();
+        return self::$connector->$name(...$arguments);
     }
 }

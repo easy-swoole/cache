@@ -1,28 +1,31 @@
 {
     "name": "easyswoole/cache",
-    "description": "Simple caching library for easySwoole",
-    "keywords": [
-        "cache",
-        "redis",
-        "memcached"
-    ],
-    "homepage": "http://www.easyswoole.com",
+    "description": "A simple Cache Manager implementation integrated into easySwoole",
     "type": "library",
+    "keywords": [
+        "easySwoole",
+        "Redis",
+        "Memcache",
+        "Memcached",
+        "Cache"
+    ],
+    "homepage": "https://github.com/easy-swoole/cache",
+    "minimum-stability": "stable",
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "evalor",
-            "email": "master@evalor.cn",
-            "homepage": "http://www.evalor.cn",
+            "name": "eValor",
+            "email": "mipone@foxmail.com",
+            "homepage": "http://evalor.cn",
             "role": "Developer"
         }
     ],
     "require": {
-        "psr/simple-cache": "^1.0"
+        "PHP": ">=5.6.0"
     },
     "autoload": {
         "psr-4": {
-            "easySwoole\\Cache\\": "src"
+            "easySwoole\\Cache\\": "src/"
         }
     }
 }
