@@ -21,7 +21,7 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    abstract function inc($name, $step = null);
+    abstract public function inc($name, $step = null);
 
     /**
      * Decrement the value of the storage.
@@ -30,7 +30,7 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    abstract function dec($name, $step = null);
+    abstract public function dec($name, $step = null);
 
     /**
      * Fetches a value from the cache and delete it.
@@ -39,7 +39,7 @@ abstract class AbstractCache
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
-    abstract function pull($name, $default = null);
+    abstract public function pull($name, $default = null);
 
     /**
      * If the name does not exist, insert value.
@@ -49,7 +49,7 @@ abstract class AbstractCache
      * @return boolean
      * @author : evalor <master@evalor.cn>
      */
-    abstract function remember($name, $value, $ttl = null);
+    abstract public function remember($name, $value, $ttl = null);
 
     /**
      * Fetches a value from the cache.
@@ -58,7 +58,7 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return mixed
      */
-    abstract function get($name, $default = null);
+    abstract public function get($name, $default = null);
 
     /**
      * Persists data in the cache, uniquely referenced by a name with an optional expiration TTL time.
@@ -68,7 +68,7 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    abstract function set($name, $value, $ttl = null);
+    abstract public function set($name, $value, $ttl = null);
 
     /**
      * Delete an item from the cache by its unique key.
@@ -76,7 +76,7 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    abstract function delete($name);
+    abstract public function delete($name);
 
     /**
      * Determines whether an item is present in the cache.
@@ -84,14 +84,14 @@ abstract class AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    abstract function has($name);
+    abstract public function has($name);
 
     /**
      * Wipes clean the entire cache's keys.
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    abstract function clear();
+    abstract public function clear();
 
     /**
      * Turn the DateTime type into an integer type timestamp

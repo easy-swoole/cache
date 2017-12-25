@@ -29,14 +29,16 @@ class Files extends AbstractCache
      * @param array $options
      * @throws CacheException
      */
-    function __construct($options = [])
+    public function __construct($options = [])
     {
         $DS = DIRECTORY_SEPARATOR;
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
 
-        if ($this->options['path'] == '') $this->options['path'] = sys_get_temp_dir() . $DS;
+        if ($this->options['path'] == '') {
+            $this->options['path'] = sys_get_temp_dir() . $DS;
+        }
         $this->options['path'] = rtrim($this->options['path'], $DS) . $DS . 'esCache' . $DS;
         $this->init();
     }
@@ -82,7 +84,9 @@ class Files extends AbstractCache
 
         $filename = $this->options['path'] . $name . '.php';
         $dir      = dirname($filename);
-        if (!is_dir($dir)) mkdir($dir, 0755, true);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
 
         return $filename;
     }
@@ -107,7 +111,9 @@ class Files extends AbstractCache
     private function getContent($name)
     {
         $filename = $this->getCacheFileName($name);
-        if (!is_file($filename)) return false;
+        if (!is_file($filename)) {
+            return false;
+        }
 
         if ($this->options['thread_safe']) {
             $fd = fopen($filename, 'r+');
@@ -149,10 +155,12 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return mixed
      */
-    function get($name, $default = null)
+    public function get($name, $default = null)
     {
         $filename = $this->getCacheFileName($name);
-        if (!is_file($filename)) return $default;
+        if (!is_file($filename)) {
+            return $default;
+        }
 
         $content      = $this->getContent($name);
         $this->expire = null;
@@ -176,7 +184,6 @@ class Files extends AbstractCache
         } else {
             return $default;
         }
-
     }
 
     /**
@@ -187,9 +194,11 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function set($name, $value, $ttl = null)
+    public function set($name, $value, $ttl = null)
     {
-        if (is_null($ttl)) $ttl = $this->options['expire'];
+        if (is_null($ttl)) {
+            $ttl = $this->options['expire'];
+        }
         $ttl  = $this->getExpireTime($ttl);
         $data = $this->packData($value);
 
@@ -210,10 +219,9 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function delete($name)
+    public function delete($name)
     {
         return $this->unlink($this->getCacheFileName($name));
-
     }
 
     /**
@@ -222,7 +230,7 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function has($name)
+    public function has($name)
     {
         return is_file($this->getCacheFileName($name));
     }
@@ -232,7 +240,7 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function clear()
+    public function clear()
     {
         $cachePath   = $this->options['path'];
         $cachePrefix = $this->options['prefix'] ? $this->options['prefix'] . DIRECTORY_SEPARATOR : '';
@@ -241,7 +249,9 @@ class Files extends AbstractCache
         foreach ($files as $file) {
             if (is_dir($file)) {
                 $matches = glob($file . '/*.php');
-                if (is_array($matches)) array_map('unlink', $matches);
+                if (is_array($matches)) {
+                    array_map('unlink', $matches);
+                }
                 rmdir($file);
             } else {
                 $this->unlink($file);
@@ -258,7 +268,7 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function inc($name, $step = null)
+    public function inc($name, $step = null)
     {
         if ($this->has($name)) {
             $value  = $this->get($name) + $step;
@@ -277,7 +287,7 @@ class Files extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function dec($name, $step = null)
+    public function dec($name, $step = null)
     {
         if ($this->has($name)) {
             $value  = $this->get($name) - $step;
@@ -296,7 +306,7 @@ class Files extends AbstractCache
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
-    function pull($name, $default = null)
+    public function pull($name, $default = null)
     {
         $result = $this->get($name, false);
         if ($result) {
@@ -315,7 +325,7 @@ class Files extends AbstractCache
      * @return boolean
      * @author : evalor <master@evalor.cn>
      */
-    function remember($name, $value, $ttl = null)
+    public function remember($name, $value, $ttl = null)
     {
         if (!$this->has($name)) {
             return $this->set($name, $value, $ttl);

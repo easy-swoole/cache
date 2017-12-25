@@ -33,7 +33,7 @@ class Cache
      * @param $connector
      * @throws CacheException
      */
-    static function init($connector = null)
+    public static function init($connector = null)
     {
         $classMap  = [Files::class, Redis::class, Memcache::class, Memcached::class];
         $driverMap = ['files', 'redis', 'memcache', 'memcached'];
@@ -42,12 +42,16 @@ class Cache
             $connector = new Files;
         } elseif (is_array($connector)) {
             $driver = $connector['driver'];
-            if (!in_array($driver, $driverMap)) throw new CacheException('unknown cache driver: ' . $driver);
+            if (!in_array($driver, $driverMap)) {
+                throw new CacheException('unknown cache driver: ' . $driver);
+            }
             $class     = 'easySwoole\\Cache\\Connector\\' . ucfirst($driver);
             $connector = new $class($connector);
         } elseif (is_object($connector)) {
             $className = get_class($connector);
-            if (!in_array($className, $classMap)) throw new CacheException('unknown cache driver: ' . $className);
+            if (!in_array($className, $classMap)) {
+                throw new CacheException('unknown cache driver: ' . $className);
+            }
         } else {
             throw new CacheException('cache driver options invalid');
         }
@@ -63,9 +67,11 @@ class Cache
      * @return mixed
      * @throws CacheException
      */
-    static function __callStatic($name, $arguments)
+    public static function __callStatic($name, $arguments)
     {
-        if (!is_object(self::$connector)) self::init();
+        if (!is_object(self::$connector)) {
+            self::init();
+        }
         return self::$connector->$name(...$arguments);
     }
 }

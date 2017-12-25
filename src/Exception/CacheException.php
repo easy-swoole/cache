@@ -10,5 +10,4 @@ namespace easySwoole\Cache\Exception;
  */
 class CacheException extends \Exception
 {
-
 }

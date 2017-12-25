@@ -31,7 +31,7 @@ class Redis extends AbstractCache
      * @param array $options
      * @throws CacheException
      */
-    function __construct($options = [])
+    public function __construct($options = [])
     {
         if (!extension_loaded('redis')) {
             throw new CacheException('Cache Connector: not support redis');
@@ -70,7 +70,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function inc($name, $step = 1)
+    public function inc($name, $step = 1)
     {
         return self::$instance->incrBy($this->getCacheKey($name), $step);
     }
@@ -82,7 +82,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function dec($name, $step = 1)
+    public function dec($name, $step = 1)
     {
         return self::$instance->decrBy($this->getCacheKey($name), $step);
     }
@@ -94,7 +94,7 @@ class Redis extends AbstractCache
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
-    function pull($name, $default = null)
+    public function pull($name, $default = null)
     {
         $result = $this->get($name, false);
         if ($result) {
@@ -113,7 +113,7 @@ class Redis extends AbstractCache
      * @return boolean
      * @author : evalor <master@evalor.cn>
      */
-    function remember($name, $value, $ttl = null)
+    public function remember($name, $value, $ttl = null)
     {
         if (!$this->has($name)) {
             return $this->set($name, $value, $ttl);
@@ -129,7 +129,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return mixed
      */
-    function get($name, $default = null)
+    public function get($name, $default = null)
     {
         $this->connect();
         $value = self::$instance->get($this->getCacheKey($name));
@@ -147,10 +147,12 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function set($name, $value, $ttl = null)
+    public function set($name, $value, $ttl = null)
     {
         $this->connect();
-        if (is_null($ttl)) $ttl = $this->options['expire'];
+        if (is_null($ttl)) {
+            $ttl = $this->options['expire'];
+        }
 
         $key   = $this->getCacheKey($name);
         $ttl   = $this->getExpireTime($ttl);
@@ -171,7 +173,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function delete($name)
+    public function delete($name)
     {
         return self::$instance->delete($this->getCacheKey($name));
     }
@@ -182,7 +184,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function has($name)
+    public function has($name)
     {
         return self::$instance->exists($this->getCacheKey($name));
     }
@@ -192,7 +194,7 @@ class Redis extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function clear()
+    public function clear()
     {
         $keys = self::$instance->keys($this->options['prefix'] . '*');
         if ($keys) {

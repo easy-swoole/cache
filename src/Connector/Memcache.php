@@ -29,7 +29,7 @@ class Memcache extends AbstractCache
      * @param array $options
      * @throws CacheException
      */
-    function __construct($options = [])
+    public function __construct($options = [])
     {
         if (!extension_loaded('memcache')) {
             throw new CacheException('Cache Connector: not support memcache');
@@ -52,7 +52,9 @@ class Memcache extends AbstractCache
             // Cluster connections
             $hosts = explode(',', $this->options['host']);
             $ports = explode(',', $this->options['port']);
-            if (empty($ports[0])) $ports[0] = 11211;
+            if (empty($ports[0])) {
+                $ports[0] = 11211;
+            }
 
             // connection establishment
             foreach ((array)$hosts as $i => $host) {
@@ -71,7 +73,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function inc($name, $step = 1)
+    public function inc($name, $step = 1)
     {
         $key = $this->getCacheKey($name);
         if (self::$instance->get($key)) {
@@ -87,7 +89,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean|int
      */
-    function dec($name, $step = 1)
+    public function dec($name, $step = 1)
     {
         $key   = $this->getCacheKey($name);
         $value = self::$instance->get($key) - $step;
@@ -101,7 +103,7 @@ class Memcache extends AbstractCache
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
-    function pull($name, $default = null)
+    public function pull($name, $default = null)
     {
         $result = $this->get($name, false);
         if ($result) {
@@ -120,7 +122,7 @@ class Memcache extends AbstractCache
      * @return boolean
      * @author : evalor <master@evalor.cn>
      */
-    function remember($name, $value, $ttl = null)
+    public function remember($name, $value, $ttl = null)
     {
         if (!$this->has($name)) {
             return $this->set($name, $value, $ttl);
@@ -136,7 +138,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return mixed
      */
-    function get($name, $default = null)
+    public function get($name, $default = null)
     {
         $this->connect();
         $result = self::$instance->get($this->getCacheKey($name));
@@ -151,10 +153,12 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function set($name, $value, $ttl = null)
+    public function set($name, $value, $ttl = null)
     {
         $this->connect();
-        if (is_null($ttl)) $ttl = $this->options['expire'];
+        if (is_null($ttl)) {
+            $ttl = $this->options['expire'];
+        }
 
         $key   = $this->getCacheKey($name);
         $ttl   = $this->getExpireTime($ttl);
@@ -169,7 +173,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function delete($name)
+    public function delete($name)
     {
         $this->connect();
         $key = $this->getCacheKey($name);
@@ -182,7 +186,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean
      */
-    function has($name)
+    public function has($name)
     {
         $this->connect();
         $key = $this->getCacheKey($name);
@@ -194,7 +198,7 @@ class Memcache extends AbstractCache
      * @author : evalor <master@evalor.cn>
      * @return boolean True on success and false on failure.
      */
-    function clear()
+    public function clear()
     {
         $this->connect();
         return self::$instance->flush();
