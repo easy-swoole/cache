@@ -35,7 +35,7 @@ class Files extends AbstractCache
 
     /**
      * Files constructor.
-     * @param array $options
+     * @param  array          $options
      * @throws CacheException
      */
     public function __construct($options = [])
@@ -46,9 +46,9 @@ class Files extends AbstractCache
         }
 
         if ($this->options['path'] == '') {
-            $this->options['path'] = sys_get_temp_dir() . $DS;
+            $this->options['path'] = sys_get_temp_dir().$DS;
         }
-        $this->options['path'] = rtrim($this->options['path'], $DS) . $DS . 'esCache' . $DS;
+        $this->options['path'] = rtrim($this->options['path'], $DS).$DS.'esCache'.$DS;
         $this->init();
     }
 
@@ -67,7 +67,7 @@ class Files extends AbstractCache
         }
 
         if (!is_writeable($this->options['path'])) {
-            throw new CacheException('Cache Path: ' . $this->options['path'] . ' is not writable');
+            throw new CacheException('Cache Path: '.$this->options['path'].' is not writable');
         }
 
         return false;
@@ -84,14 +84,14 @@ class Files extends AbstractCache
         $name = hash($this->options['hash_type'], $name);
 
         if ($this->options['cache_subdir']) {
-            $name = substr($name, 0, 2) . DIRECTORY_SEPARATOR . substr($name, 2);
+            $name = substr($name, 0, 2).DIRECTORY_SEPARATOR.substr($name, 2);
         }
 
         if ($this->options['prefix']) {
-            $name = $this->options['prefix'] . DIRECTORY_SEPARATOR . $name;
+            $name = $this->options['prefix'].DIRECTORY_SEPARATOR.$name;
         }
 
-        $filename = $this->options['path'] . $name . '.php';
+        $filename = $this->options['path'].$name.'.php';
         $dir      = dirname($filename);
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
@@ -177,7 +177,7 @@ class Files extends AbstractCache
         $this->expire = null;
 
         if ($content !== false) {
-            $expire = (int)substr($content, 8, 12);
+            $expire = (int) substr($content, 8, 12);
 
             if (0 != $expire && time() > filemtime($filename) + $expire) {
                 $this->unlink($filename);
@@ -220,7 +220,7 @@ class Files extends AbstractCache
             $data = gzcompress($data, 3);
         }
 
-        $data   = "<?php\n//" . sprintf('%012d', $ttl) . "\n exit();?>\n" . $data;
+        $data   = "<?php\n//".sprintf('%012d', $ttl)."\n exit();?>\n".$data;
         $result = $this->setContent($name, $data);
 
         return boolval($result);
@@ -256,12 +256,12 @@ class Files extends AbstractCache
     public function clear()
     {
         $cachePath   = $this->options['path'];
-        $cachePrefix = $this->options['prefix'] ? $this->options['prefix'] . DIRECTORY_SEPARATOR : '';
-        $files       = (array)glob($cachePath . $cachePrefix . '*');
+        $cachePrefix = $this->options['prefix'] ? $this->options['prefix'].DIRECTORY_SEPARATOR : '';
+        $files       = (array) glob($cachePath.$cachePrefix.'*');
 
         foreach ($files as $file) {
             if (is_dir($file)) {
-                $matches = glob($file . '/*.php');
+                $matches = glob($file.'/*.php');
                 if (is_array($matches)) {
                     array_map('unlink', $matches);
                 }
@@ -276,8 +276,8 @@ class Files extends AbstractCache
 
     /**
      * Fetches a value from the cache and delete it.
-     * @param string $name    The name of the item in store.
-     * @param mixed  $default Default value to return if the key does not exist.
+     * @param  string $name    The name of the item in store.
+     * @param  mixed  $default Default value to return if the key does not exist.
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
@@ -295,9 +295,9 @@ class Files extends AbstractCache
 
     /**
      * If the name does not exist, insert value.
-     * @param string                 $name  The name of the item to store.
-     * @param mixed                  $value The value of the item to store, must be serializable.
-     * @param null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     * @param  string                 $name  The name of the item to store.
+     * @param  mixed                  $value The value of the item to store, must be serializable.
+     * @param  null|int|\DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
      * @return bool
      * @author : evalor <master@evalor.cn>
      */
