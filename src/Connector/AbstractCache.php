@@ -66,8 +66,8 @@ abstract class AbstractCache
 
     /**
      * Fetches a value from the cache and delete it.
-     * @param string $name    The name of the item in store.
-     * @param mixed  $default Default value to return if the key does not exist.
+     * @param  string $name    The name of the item in store.
+     * @param  mixed  $default Default value to return if the key does not exist.
      * @return mixed
      * @author : evalor <master@evalor.cn>
      */
@@ -75,9 +75,9 @@ abstract class AbstractCache
 
     /**
      * If the name does not exist, insert value.
-     * @param string                $name  The name of the item to store.
-     * @param mixed                 $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
+     * @param  string                $name  The name of the item to store.
+     * @param  mixed                 $value The value of the item to store, must be serializable.
+     * @param  null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
      * @return bool
      * @author : evalor <master@evalor.cn>
      */
@@ -137,7 +137,7 @@ abstract class AbstractCache
             $expire = $expire->getTimestamp() - time();
         }
 
-        return (int)$expire;
+        return (int) $expire;
     }
 
     /**
@@ -170,6 +170,6 @@ abstract class AbstractCache
      */
     protected function getCacheKey($name)
     {
-        return $this->options['prefix'] . $name;
+        return $this->options['prefix'].$name;
     }
 }
