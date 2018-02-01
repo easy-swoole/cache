@@ -88,6 +88,7 @@ class Redis extends AbstractCache
      */
     public function inc($name, $step = 1)
     {
+        $this->connect();
         return self::$instance->incrBy($this->getCacheKey($name), $step);
     }
 
@@ -103,6 +104,7 @@ class Redis extends AbstractCache
      */
     public function dec($name, $step = 1)
     {
+        $this->connect();
         return self::$instance->decrBy($this->getCacheKey($name), $step);
     }
 
@@ -166,7 +168,7 @@ class Redis extends AbstractCache
             return $default;
         }
 
-        return $this->unPackData($value);
+        return is_numeric($value) ? $value : $this->unPackData($value);
     }
 
     /**
@@ -189,7 +191,7 @@ class Redis extends AbstractCache
 
         $key   = $this->getCacheKey($name);
         $ttl   = $this->getExpireTime($ttl);
-        $value = $this->packData($value);
+        $value = is_numeric($value) ? $value : $this->packData($value);
 
         if ($ttl) {
             $result = self::$instance->setex($key, $ttl, $value);
@@ -211,6 +213,7 @@ class Redis extends AbstractCache
      */
     public function delete($name)
     {
+        $this->connect();
         return self::$instance->delete($this->getCacheKey($name));
     }
 
@@ -225,6 +228,7 @@ class Redis extends AbstractCache
      */
     public function has($name)
     {
+        $this->connect();
         return self::$instance->exists($this->getCacheKey($name));
     }
 
@@ -237,6 +241,7 @@ class Redis extends AbstractCache
      */
     public function clear()
     {
+        $this->connect();
         $keys = self::$instance->keys($this->options['prefix'].'*');
         if ($keys) {
             self::$instance->del(...$keys);
