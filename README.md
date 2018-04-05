@@ -26,6 +26,9 @@ composer require easyswoole/cache
 ```php
 use easySwoole\Cache\Cache;
 
+// 直接获取驱动操作类
+Cache::connector();
+
 // 获取缓存
 Cache::get('name', 'default');
 // 设置缓存(10秒后过期)
