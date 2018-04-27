@@ -31,6 +31,7 @@ use easySwoole\Cache\Exception\CacheException;
  * @method static delete           ($key)
  * @method static clear            ()
  * @method static has              ($key)
+ * @method static driver           ()
  */
 class Cache
 {
@@ -52,29 +53,20 @@ class Cache
         } elseif (is_array($connector)) {
             $driver = $connector['driver'];
             if (!in_array($driver, $driverMap)) {
-                throw new CacheException('unknown cache driver: '.$driver);
+                throw new CacheException('unknown cache driver: ' . $driver);
             }
-            $class     = 'easySwoole\\Cache\\Connector\\'.ucfirst($driver);
+            $class     = 'easySwoole\\Cache\\Connector\\' . ucfirst($driver);
             $connector = new $class($connector);
         } elseif (is_object($connector)) {
             $className = get_class($connector);
             if (!in_array($className, $classMap)) {
-                throw new CacheException('unknown cache driver: '.$className);
+                throw new CacheException('unknown cache driver: ' . $className);
             }
         } else {
             throw new CacheException('cache driver options invalid');
         }
 
         self::$connector = $connector;
-    }
-
-    /**
-     * Get the connector instance.
-     * @author : evalor <master@evalor.cn>
-     */
-    public static function connector()
-    {
-        return self::$connector;
     }
 
     /**

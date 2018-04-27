@@ -126,6 +126,13 @@ abstract class AbstractCache
     abstract public function clear();
 
     /**
+     * Get the cache driver instance
+     * @author : evalor <master@evalor.cn>
+     * @return mixed the Driver instance
+     */
+    abstract public function driver();
+
+    /**
      * Turn the DateTime type into an integer type timestamp.
      * @param \DateTime|int|string $expire
      * @author : evalor <master@evalor.cn>
@@ -137,7 +144,7 @@ abstract class AbstractCache
             $expire = $expire->getTimestamp() - time();
         }
 
-        return (int) $expire;
+        return (int)$expire;
     }
 
     /**
@@ -170,6 +177,6 @@ abstract class AbstractCache
      */
     protected function getCacheKey($name)
     {
-        return $this->options['prefix'].$name;
+        return $this->options['prefix'] . $name;
     }
 }

@@ -309,4 +309,9 @@ class Files extends AbstractCache
 
         return $this->get($name);
     }
+
+    public function driver()
+    {
+        return true;
+    }
 }

@@ -249,4 +249,10 @@ class Memcache extends AbstractCache
 
         return self::$instance->flush();
     }
+
+    public function driver()
+    {
+        $this->connect();
+        return self::$instance;
+    }
 }

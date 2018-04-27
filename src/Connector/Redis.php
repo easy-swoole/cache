@@ -215,10 +215,14 @@ class Redis extends AbstractCache
         return true;
     }
 
-    public function redis()
+    /**
+     * Get the cache driver instance
+     * @author : evalor <master@evalor.cn>
+     * @return mixed the Driver instance
+     */
+    public function driver()
     {
         $this->connect();
-
         return self::$instance;
     }
 }
