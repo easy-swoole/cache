@@ -272,6 +272,7 @@ class Memcached extends AbstractCache
     public function driver()
     {
         $this->connect();
-       return self::$instance;
+
+        return self::$instance;
     }
 }

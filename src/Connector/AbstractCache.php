@@ -126,7 +126,7 @@ abstract class AbstractCache
     abstract public function clear();
 
     /**
-     * Get the cache driver instance
+     * Get the cache driver instance.
      * @author : evalor <master@evalor.cn>
      * @return mixed the Driver instance
      */
@@ -144,7 +144,7 @@ abstract class AbstractCache
             $expire = $expire->getTimestamp() - time();
         }
 
-        return (int)$expire;
+        return (int) $expire;
     }
 
     /**
@@ -177,6 +177,6 @@ abstract class AbstractCache
      */
     protected function getCacheKey($name)
     {
-        return $this->options['prefix'] . $name;
+        return $this->options['prefix'].$name;
     }
 }
