@@ -107,8 +107,9 @@ class Memcached extends AbstractCache
      */
     public function inc($name, $step = 1)
     {
+        $this->connect();
         $key = $this->getCacheKey($name);
-        if (self::$instance->get($key)) {
+        if ($this->get($name)) {
             return self::$instance->increment($key, $step);
         }
 
@@ -127,13 +128,13 @@ class Memcached extends AbstractCache
      */
     public function dec($name, $step = 1)
     {
+        $this->connect();
+
         if (is_null($step)) {
             $step = 1;
         }
-        $key   = $this->getCacheKey($name);
-        $value = self::$instance->get($key) - $step;
-
-        return self::$instance->set($key, $value);
+        $value = $this->get($name) - $step;
+        return $this->set($name, $value);
     }
 
     /**
