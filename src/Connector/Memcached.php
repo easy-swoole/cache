@@ -109,11 +109,7 @@ class Memcached extends AbstractCache
     {
         $this->connect();
         $key = $this->getCacheKey($name);
-        if ($this->get($name)) {
-            return self::$instance->increment($key, $step);
-        }
-
-        return self::$instance->set($key, $step);
+        return self::$instance->increment($key,$step);
     }
 
     /**
@@ -129,12 +125,15 @@ class Memcached extends AbstractCache
     public function dec($name, $step = 1)
     {
         $this->connect();
+        $key = $this->getCacheKey($name);
+        return self::$instance->decrement($key,$step);
+    }
 
-        if (is_null($step)) {
-            $step = 1;
-        }
-        $value = $this->get($name) - $step;
-        return $this->set($name, $value);
+    public function add($name,$value,$ttl=0)
+    {
+        $this->connect();
+        $key = $this->getCacheKey($name);
+        return self::$instance->add($key,$value,$ttl);
     }
 
     /**
@@ -194,7 +193,7 @@ class Memcached extends AbstractCache
         $this->connect();
         $result = self::$instance->get($this->getCacheKey($name));
 
-        return false !== $result ? $this->unPackData($result) : $default;
+        return false !== $result ? :$default;
     }
 
     /**
@@ -217,7 +216,6 @@ class Memcached extends AbstractCache
 
         $key   = $this->getCacheKey($name);
         $ttl   = $this->getExpireTime($ttl);
-        $value = $this->packData($value);
 
         return self::$instance->set($key, $value, $ttl);
     }
