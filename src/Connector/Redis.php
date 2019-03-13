@@ -49,6 +49,8 @@ class Redis extends AbstractCache
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
+
+        $this->connect();
     }
 
     /**
@@ -141,7 +143,6 @@ class Redis extends AbstractCache
      */
     public function get($name, $default = null)
     {
-        $this->connect();
         $value = self::$instance->get($this->getCacheKey($name));
         if (is_null($value) || false === $value) {
             return $default;
@@ -160,7 +161,6 @@ class Redis extends AbstractCache
      */
     public function set($name, $value, $ttl = null)
     {
-        $this->connect();
         if (is_null($ttl)) {
             $ttl = $this->options['expire'];
         }
@@ -222,8 +222,6 @@ class Redis extends AbstractCache
      */
     public function driver()
     {
-        $this->connect();
-
         return self::$instance;
     }
 }
