@@ -57,18 +57,24 @@ class Redis extends AbstractCache
      */
     protected function connect()
     {
-        if (!is_object(self::$instance)) {
-            $func = $this->options['persistent'] ? 'pconnect' : 'connect';
-
-            self::$instance = new \Redis();
-            self::$instance->$func($this->options['host'], $this->options['port'], $this->options['timeout']);
-
-            if ('' != $this->options['password']) {
-                self::$instance->auth($this->options['password']);
+        try {
+            if (is_object(self::$instance) && self::$instance->ping() === '+PONG') {
+                return;
             }
-            if (0 != $this->options['select']) {
-                self::$instance->select($this->options['select']);
-            }
+        } catch (\Exception $exception) {
+            self::$instance = null;
+        }
+
+        $func = $this->options['persistent'] ? 'pconnect' : 'connect';
+
+        self::$instance = new \Redis();
+        self::$instance->$func($this->options['host'], $this->options['port'], $this->options['timeout']);
+
+        if ('' !== $this->options['password']) {
+            self::$instance->auth($this->options['password']);
+        }
+        if (0 != $this->options['select']) {
+            self::$instance->select($this->options['select']);
         }
     }
 
@@ -81,6 +87,8 @@ class Redis extends AbstractCache
      */
     public function inc($name, $step = 1)
     {
+        $this->connect();
+
         return self::$instance->incrBy($this->getCacheKey($name), $step);
     }
 
@@ -93,6 +101,8 @@ class Redis extends AbstractCache
      */
     public function dec($name, $step = 1)
     {
+        $this->connect();
+
         return self::$instance->decrBy($this->getCacheKey($name), $step);
     }
 
@@ -105,6 +115,8 @@ class Redis extends AbstractCache
      */
     public function pull($name, $default = null)
     {
+        $this->connect();
+
         $result = $this->get($name, false);
         if ($result) {
             $this->delete($name);
@@ -125,6 +137,8 @@ class Redis extends AbstractCache
      */
     public function remember($name, $value, $ttl = null)
     {
+        $this->connect();
+
         if (!$this->has($name)) {
             return $this->set($name, $value, $ttl);
         }
@@ -142,6 +156,7 @@ class Redis extends AbstractCache
     public function get($name, $default = null)
     {
         $this->connect();
+
         $value = self::$instance->get($this->getCacheKey($name));
         if (is_null($value) || false === $value) {
             return $default;
@@ -161,6 +176,7 @@ class Redis extends AbstractCache
     public function set($name, $value, $ttl = null)
     {
         $this->connect();
+
         if (is_null($ttl)) {
             $ttl = $this->options['expire'];
         }
@@ -186,6 +202,8 @@ class Redis extends AbstractCache
      */
     public function delete($name)
     {
+        $this->connect();
+
         return self::$instance->delete($this->getCacheKey($name));
     }
 
@@ -197,6 +215,8 @@ class Redis extends AbstractCache
      */
     public function has($name)
     {
+        $this->connect();
+
         return self::$instance->exists($this->getCacheKey($name));
     }
 
@@ -207,6 +227,8 @@ class Redis extends AbstractCache
      */
     public function clear()
     {
+        $this->connect();
+
         $keys = self::$instance->keys($this->options['prefix'].'*');
         if ($keys) {
             self::$instance->del(...$keys);
