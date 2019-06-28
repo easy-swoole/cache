@@ -223,13 +223,14 @@ class Redis extends AbstractCache
     /**
      * Wipes clean the entire cache's keys.
      * @author : evalor <master@evalor.cn>
+     * @param string $prefix The specified KEY prefix
      * @return bool True on success and false on failure.
      */
-    public function clear()
+    public function clear($prefix = '')
     {
         $this->connect();
 
-        $keys = self::$instance->keys($this->options['prefix'].'*');
+        $keys = self::$instance->keys($this->options['prefix'] . $prefix . '*');
         if ($keys) {
             self::$instance->del(...$keys);
         }

@@ -29,7 +29,7 @@ use easySwoole\Cache\Exception\CacheException;
  * @method static get              ($key, $default = null)
  * @method static set              ($key, $value, $ttl = null)
  * @method static delete           ($key)
- * @method static clear            ()
+ * @method static clear            ($prefix = '')
  * @method static has              ($key)
  * @method static driver           ()
  */

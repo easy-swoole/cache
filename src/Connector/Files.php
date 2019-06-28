@@ -251,13 +251,14 @@ class Files extends AbstractCache
     /**
      * Wipes clean the entire cache's keys.
      * @author : evalor <master@evalor.cn>
+     * @param string $prefix The specified KEY prefix
      * @return bool True on success and false on failure.
      */
-    public function clear()
+    public function clear($prefix = '')
     {
         $cachePath   = $this->options['path'];
         $cachePrefix = $this->options['prefix'] ? $this->options['prefix'].DIRECTORY_SEPARATOR : '';
-        $files       = (array) glob($cachePath.$cachePrefix.'*');
+        $files       = (array) glob($cachePath.$cachePrefix.$prefix.'*');
 
         foreach ($files as $file) {
             if (is_dir($file)) {
