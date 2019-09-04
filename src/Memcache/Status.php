@@ -34,7 +34,7 @@ class Status extends SplEnum
      * @param $code
      * @return mixed|string
      */
-    public function code2Tips($code)
+    public static function code2Tips($code)
     {
         $tips = [
             Status::STAT_NO_ERROR          => 'No error',
