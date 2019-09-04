@@ -2,6 +2,7 @@
 
 namespace SwooleKit\Cache\Exception;
 
+use Exception;
 use Psr\SimpleCache\CacheException as PsrCacheException;
 
 /**
@@ -9,7 +10,7 @@ use Psr\SimpleCache\CacheException as PsrCacheException;
  * Class CacheException
  * @package SwooleKit\Cache\Exception
  */
-class CacheException extends \Exception implements PsrCacheException
+class CacheException extends Exception implements PsrCacheException
 {
 
 }
