@@ -5,13 +5,13 @@ namespace SwooleKit\Cache\Config;
 use EasySwoole\Component\Pool\PoolConf;
 
 /**
- * Class MemcachedConfig
+ * Class MemcacheConfig
  * @package Config
  */
-class MemcachedConfig extends PoolConf
+class MemcacheConfig extends PoolConf
 {
-    protected $host;
-    protected $port;
+    protected $host = '127.0.0.1';
+    protected $port = 11211;
 
     /**
      * Host Getter
