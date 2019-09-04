@@ -9,7 +9,7 @@ use Psr\SimpleCache\CacheException as PsrCacheException;
  * Class CacheException
  * @package SwooleKit\Cache\Exception
  */
-class CacheException implements PsrCacheException
+class CacheException extends \Exception implements PsrCacheException
 {
 
 }
