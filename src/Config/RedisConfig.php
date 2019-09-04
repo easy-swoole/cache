@@ -1,10 +1,14 @@
 <?php
 
+namespace SwooleKit\Cache\Config;
 
-namespace Config;
+use EasySwoole\Component\Pool\PoolConf;
 
-
-class RedisConfig
+/**
+ * Class RedisConfig
+ * @package SwooleKit\Cache\Config
+ */
+class RedisConfig extends PoolConf
 {
 
 }

@@ -1,10 +1,14 @@
 <?php
 
+namespace SwooleKit\Cache\Config;
 
-namespace Config;
+use EasySwoole\Spl\SplBean;
 
-
-class SwooleConfig
+/**
+ * Class SwooleConfig
+ * @package SwooleKit\Cache\Config
+ */
+class SwooleConfig extends SplBean
 {
 
 }

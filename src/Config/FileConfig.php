@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace SwooleKit\Cache\Config;
 
 use EasySwoole\Spl\SplBean;
 

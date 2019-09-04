@@ -2,7 +2,7 @@
 
 namespace SwooleKit\Cache\Drivers;
 
-use Config\FileConfig;
+use SwooleKit\Cache\Config\FileConfig;
 
 /**
  * 文件缓存
