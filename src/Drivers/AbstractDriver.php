@@ -4,6 +4,8 @@ namespace SwooleKit\Cache\Drivers;
 
 use Opis\Closure\SerializableClosure;
 use Psr\SimpleCache\CacheInterface;
+use function serialize;
+use function unserialize;
 
 /**
  * 抽象驱动类
@@ -108,7 +110,7 @@ abstract class AbstractDriver implements CacheInterface
         $serialize = $this->options['serialize'][0] ?? function ($data) {
                 SerializableClosure::enterContext();
                 SerializableClosure::wrapClosures($data);
-                $data = \serialize($data);
+                $data = serialize($data);
                 SerializableClosure::exitContext();
                 return $data;
             };
@@ -124,7 +126,7 @@ abstract class AbstractDriver implements CacheInterface
     {
         $unserialize = $this->options['serialize'][1] ?? function ($data) {
                 SerializableClosure::enterContext();
-                $data = \unserialize($data);
+                $data = unserialize($data);
                 SerializableClosure::unwrapClosures($data);
                 SerializableClosure::exitContext();
                 return $data;

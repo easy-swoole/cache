@@ -3,6 +3,8 @@
 namespace SwooleKit\Cache\Pools;
 
 use EasySwoole\Component\Pool\AbstractPool;
+use SwooleKit\Cache\Config\MemcacheConfig;
+use SwooleKit\Cache\Memcache\MemcacheClient;
 
 /**
  * Memcache Pools
@@ -11,8 +13,15 @@ use EasySwoole\Component\Pool\AbstractPool;
  */
 class MemcachePool extends AbstractPool
 {
+    /**
+     * 创建客户端对象
+     * @return MemcacheClient
+     */
     protected function createObject()
     {
-        // TODO: Implement createObject() method.
+        /** @var MemcacheConfig $memcacheConfig */
+        $memcacheConfig = $this->getConfig();
+        $memcacheClient = new MemcacheClient($memcacheConfig->getHost(), $memcacheConfig->getPort());
+        return $memcacheClient;
     }
 }

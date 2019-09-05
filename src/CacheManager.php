@@ -2,6 +2,7 @@
 
 namespace SwooleKit\Cache;
 
+use EasySwoole\Component\Singleton;
 use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
 
 /**
@@ -11,14 +12,11 @@ use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
  */
 class CacheManager
 {
-    public function getInstance()
-    {
-
-    }
+    use Singleton;
 
     public function addDriver(PsrCacheInterface $cacheDriver, $driverName = 'default')
     {
-
+        
     }
 
     public function getDriver($driverName = 'default')

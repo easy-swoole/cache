@@ -3,22 +3,28 @@
 namespace SwooleKit\Cache\Pools;
 
 use EasySwoole\Component\Pool\PoolObjectInterface;
+use SwooleKit\Cache\Memcache\MemcacheClient;
 
-class MemcachePoolObject implements PoolObjectInterface
+/**
+ * Memcache Pool Client
+ * Class MemcachePoolObject
+ * @package SwooleKit\Cache\Pools
+ */
+class MemcachePoolObject extends MemcacheClient implements PoolObjectInterface
 {
     function gc()
     {
-        // TODO: Implement gc() method.
+
     }
 
     function objectRestore()
     {
-        // TODO: Implement objectRestore() method.
+
     }
 
     function beforeUse(): bool
     {
-        // TODO: Implement beforeUse() method.
+        return true;
     }
 
 }
