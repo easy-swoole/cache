@@ -15,13 +15,13 @@ class MemcachePool extends AbstractPool
 {
     /**
      * 创建客户端对象
-     * @return MemcacheClient
+     * @return MemcachePoolObject
      */
     protected function createObject()
     {
         /** @var MemcacheConfig $memcacheConfig */
         $memcacheConfig = $this->getConfig();
-        $memcacheClient = new MemcacheClient($memcacheConfig->getHost(), $memcacheConfig->getPort());
+        $memcacheClient = new MemcachePoolObject($memcacheConfig->getHost(), $memcacheConfig->getPort());
         return $memcacheClient;
     }
 }
