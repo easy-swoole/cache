@@ -2,9 +2,8 @@
 
 namespace SwooleKit\Cache\Drivers;
 
-use Config\FileConfig;
-use const false;
-use const LOCK_EX;
+use Exception;
+use SwooleKit\Cache\Config\FileConfig;
 
 /**
  * 文件缓存
@@ -22,19 +21,27 @@ class File extends AbstractDriver
      * 构造函数
      * File constructor.
      * @param FileConfig $cacheConfig
+     * @throws Exception
      */
-    function __construct(FileConfig $cacheConfig)
+    function __construct(FileConfig $cacheConfig = null)
     {
+        if (!($cacheConfig instanceof FileConfig)) {
+            $cacheConfig = new FileConfig;
+        }
+
         $this->cachePath = $cacheConfig->getCachePath();
         $this->cachePrefix = $cacheConfig->getCachePrefix();
         $this->defaultExpire = $cacheConfig->getDefaultExpire();
 
         clearstatcache(true);
-        if (!file_exists($this->cachePath)) {
-            $status = \EasySwoole\Utility\File::createDirectory($this->cachePath);
-        }
         if (substr($this->cachePath, -1) != DIRECTORY_SEPARATOR) {
             $this->cachePath .= DIRECTORY_SEPARATOR;
+        }
+
+        if (!file_exists($this->cachePath)) {
+            if (!\EasySwoole\Utility\File::createDirectory($this->cachePath)) {
+                throw new Exception('File Cache Driver: directory create failed!');
+            }
         }
     }
 
@@ -51,7 +58,7 @@ class File extends AbstractDriver
             $name = $this->cachePrefix . DIRECTORY_SEPARATOR . $name;
         }
         $filename = $this->cachePath . $name . '.php';
-        $dir      = dirname($filename);
+        $dir = dirname($filename);
         if ($auto && !is_dir($dir)) {
             \EasySwoole\Utility\File::createDirectory($dir);
         }
@@ -68,12 +75,12 @@ class File extends AbstractDriver
     public function set($key, $value, $expire = null)
     {
         if (is_null($expire)) {
-            $expire = $this->defaultExpire ;
+            $expire = $this->defaultExpire;
         }
         $filename = $this->getCacheKey($key, true);
         $data = $this->serialize($value);
-        $data   = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
-        $result = file_put_contents($filename, $data,LOCK_EX);
+        $data = "<?php\n//" . sprintf('%012d', $expire) . "\n exit();?>\n" . $data;
+        $result = file_put_contents($filename, $data, LOCK_EX);
         if ($result) {
             clearstatcache();
             return true;
@@ -94,15 +101,15 @@ class File extends AbstractDriver
         if (!is_file($filename)) {
             return false;
         }
-        $content      = file_get_contents($filename);
+        $content = file_get_contents($filename);
         $this->expire = null;
         if (false !== $content) {
-            $expire = (int) substr($content, 8, 12);
+            $expire = (int)substr($content, 8, 12);
             if (0 != $expire && time() > filemtime($filename) + $expire) {
                 return false;
             }
             $this->expire = $expire;
-            $content      = substr($content, 32);
+            $content = substr($content, 32);
             $content = $this->unserialize($content);
             return $content;
         } else {
@@ -119,10 +126,10 @@ class File extends AbstractDriver
     public function inc($key, $step = 1)
     {
         if ($this->has($key)) {
-            $value  = $this->get($key) + $step;
+            $value = $this->get($key) + $step;
             $expire = $this->expire;
         } else {
-            $value  = $step;
+            $value = $step;
             $expire = 0;
         }
         return $this->set($key, $value, $expire) ? $value : false;
@@ -137,10 +144,10 @@ class File extends AbstractDriver
     public function dec($key, $step = 1)
     {
         if ($this->has($key)) {
-            $value  = $this->get($key) - $step;
+            $value = $this->get($key) - $step;
             $expire = $this->expire;
         } else {
-            $value  = -$step;
+            $value = -$step;
             $expire = 0;
         }
         return $this->set($key, $value, $expire) ? $value : false;
@@ -173,7 +180,7 @@ class File extends AbstractDriver
      */
     public function clear()
     {
-        $files = (array) glob($this->cachePath . ($this->cachePrefix ? $this->cachePrefix . DIRECTORY_SEPARATOR : '') . '*');
+        $files = (array)glob($this->cachePath . ($this->cachePrefix ? $this->cachePrefix . DIRECTORY_SEPARATOR : '') . '*');
         foreach ($files as $path) {
             if (is_dir($path)) {
                 $matches = glob($path . '/*.php');

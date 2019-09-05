@@ -28,7 +28,7 @@ class FileConfig extends SplBean
     private function initDefaultConfig()
     {
         $this->cachePath = sys_get_temp_dir();
-        $this->cachePrefix = 'SW_CACHE_';
+        $this->cachePrefix = null;
         $this->defaultExpire = 0;
     }
 
