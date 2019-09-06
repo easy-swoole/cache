@@ -1,6 +1,6 @@
 {
     "name": "swoole-kit/cache",
-    "description": "EasyCache",
+    "description": "易用的缓存工具类(FileSystem/Redis/Memcahced/SwooleTable)支持协程特性",
     "type": "library",
     "license": "Apache-2.0",
     "authors": [
