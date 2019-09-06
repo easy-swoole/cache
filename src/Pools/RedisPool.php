@@ -18,6 +18,12 @@ class RedisPool extends AbstractPool
         $redis = new RedisPoolObject;
         $connected = $redis->connect($config->getHost(), $config->getPort());
         if ($connected) {
+            if ($config->getAuth()) {
+                $redis->auth($config->getAuth());
+            }
+            if ($config->getDb()) {
+                $redis->select($config->getDb());
+            }
             return $redis;
         }
         return null;
