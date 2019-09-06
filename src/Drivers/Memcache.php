@@ -69,10 +69,10 @@ class Memcache extends AbstractDriver
         }
 
         // 协程结束自动回收链接
-        $coroutineId = Coroutine::getCid();
+        $coroutineId = Coroutine::getuid();
         if (!isset($this->memcacheContext[$coroutineId])) {
             $this->memcacheContext[$coroutineId] = $this->memcachePool->getObj();;
-            Coroutine::defer(function () use ($coroutineId) {
+            defer(function () use ($coroutineId) {
                 $this->memcachePool->recycleObj($this->memcacheContext[$coroutineId]);
             });
         }
@@ -147,7 +147,6 @@ class Memcache extends AbstractDriver
 
     /**
      * 缓存是否存在
-     * TODO 可以优化为noreply
      * @param string $key
      * @return bool
      * @throws CacheException

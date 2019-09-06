@@ -107,14 +107,11 @@ abstract class AbstractDriver implements CacheInterface
      */
     protected function serialize($data): string
     {
-        $serialize = $this->options['serialize'][0] ?? function ($data) {
-                SerializableClosure::enterContext();
-                SerializableClosure::wrapClosures($data);
-                $data = serialize($data);
-                SerializableClosure::exitContext();
-                return $data;
-            };
-        return $serialize($data);
+        SerializableClosure::enterContext();
+        SerializableClosure::wrapClosures($data);
+        $data = serialize($data);
+        SerializableClosure::exitContext();
+        return $data;
     }
 
     /**
@@ -124,13 +121,10 @@ abstract class AbstractDriver implements CacheInterface
      */
     protected function unserialize(string $data)
     {
-        $unserialize = $this->options['serialize'][1] ?? function ($data) {
-                SerializableClosure::enterContext();
-                $data = unserialize($data);
-                SerializableClosure::unwrapClosures($data);
-                SerializableClosure::exitContext();
-                return $data;
-            };
-        return $unserialize($data);
+        SerializableClosure::enterContext();
+        $data = unserialize($data);
+        SerializableClosure::unwrapClosures($data);
+        SerializableClosure::exitContext();
+        return $data;
     }
 }

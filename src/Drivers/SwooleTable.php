@@ -5,14 +5,14 @@ namespace SwooleKit\Cache\Drivers;
 use EasySwoole\Component\Timer;
 use EasySwoole\Utility\Random;
 use Swoole\Table;
-use SwooleKit\Cache\Config\SwooleConfig;
+use SwooleKit\Cache\Config\SwooleTableConfig;
 
 /**
  * SwooleTable缓存
  * Class Swoole
  * @package Drivers
  */
-class Swoole extends AbstractDriver
+class SwooleTable extends AbstractDriver
 {
     protected $tableName;
     protected $swooleConfig;
@@ -24,22 +24,23 @@ class Swoole extends AbstractDriver
 
     /**
      * Swoole constructor.
-     * @param SwooleConfig|null $swooleConfig
+     * @param SwooleTableConfig|null $swooleConfig
      */
-    function __construct(SwooleConfig $swooleConfig = null)
+    function __construct(SwooleTableConfig $swooleConfig = null)
     {
         $this->tableName = Random::character(32);
-        if (!($swooleConfig instanceof SwooleConfig)) {
-            $swooleConfig = new SwooleConfig;
+        if (!($swooleConfig instanceof SwooleTableConfig)) {
+            $swooleConfig = new SwooleTableConfig;
         }
 
         $this->swooleConfig = $swooleConfig;
 
         // 定义储存表的结构
         $this->tableStructure = [
-            'key'    => ['type' => Table::TYPE_STRING, 'size' => $swooleConfig->getMaxKeySize()],
-            'value'  => ['type' => Table::TYPE_STRING, 'size' => $swooleConfig->getMaxValueSize()],
-            'expire' => ['type' => Table::TYPE_INT, 'size' => 4]
+            'key'       => ['type' => Table::TYPE_STRING, 'size' => $swooleConfig->getMaxKeySize()],
+            'value'     => ['type' => Table::TYPE_STRING, 'size' => $swooleConfig->getMaxValueSize()],
+            'expire'    => ['type' => Table::TYPE_INT, 'size' => 4],
+            'serialize' => ['type' => Table::TYPE_INT, 'size' => 1],
         ];
 
         // 创建数据存储表
@@ -76,33 +77,51 @@ class Swoole extends AbstractDriver
         $this->timer = Timer::getInstance()->loop($interval, function () {
             $currentTime = time();
             foreach ($this->table as $cacheItem) {
-                if ($cacheItem['expire']!=0&&$cacheItem['expire'] < $currentTime) {
+                if ($cacheItem['expire'] !== 0 && $cacheItem['expire'] < $currentTime) {
                     $this->table->del($cacheItem['key']);
                 }
             }
         });
     }
 
+    /**
+     * 获取一个值
+     * @param string $key
+     * @param null $default
+     * @return mixed
+     */
     public function get($key, $default = null)
     {
-        return $this->table->get($key, 'value');
-    }
-
-    public function set($key,$value, $ttl = null)
-    {
-        if (is_null($ttl)) {
-            $expire = 0;
-        }else{
-            $expire=time()+$ttl;
+        $value = $this->table->get($key);
+        if ($value !== false) {
+            return $value['serialize'] === 1 ? $this->unserialize($value['value']) : $value;
         }
-        $arr=[
-            'key'    => $key,
-            'value'  => $value,
-            'expire' => $expire
-        ];
-        return $this->table->set($key,$arr);
+        return $default;
     }
 
+    /**
+     * 设置一个值
+     * @param string $key
+     * @param mixed $value
+     * @param null $ttl
+     * @return bool|mixed
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        list($isSerialize, $setValue) = $this->processValue($value);
+        return $this->table->set($key, [
+            'key'       => $key,
+            'value'     => $setValue,
+            'expire'    => is_null($ttl) ? 0 : intval($ttl) + time(),
+            'serialize' => $isSerialize,
+        ]);
+    }
+
+    /**
+     * 删除一个值
+     * @param string $key
+     * @return bool|mixed
+     */
     public function delete($key)
     {
         return $this->table->del($key);
@@ -117,10 +136,27 @@ class Swoole extends AbstractDriver
         return $this->initSwooleTable();
     }
 
+    /**
+     * 值是否存在
+     * @param string $key
+     * @return bool|mixed
+     */
     public function has($key)
     {
         return $this->table->exist($key);
     }
 
 
+    /**
+     * 缓存值序列化
+     * @param mixed $value
+     * @return array
+     */
+    private function processValue($value)
+    {
+        if (is_array($value) || is_object($value)) {
+            return [1, $this->serialize($value)];
+        }
+        return [0, $value];
+    }
 }

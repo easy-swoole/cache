@@ -5,10 +5,10 @@ namespace SwooleKit\Cache\Config;
 use EasySwoole\Spl\SplBean;
 
 /**
- * Class SwooleConfig
+ * Class SwooleTableConfig
  * @package SwooleKit\Cache\Config
  */
-class SwooleConfig extends SplBean
+class SwooleTableConfig extends SplBean
 {
     protected $tableSize = 4096;          // 能容纳的总Key数量
     protected $maxKeySize = 512;          // Key支持的最大长度(字节)
@@ -28,9 +28,9 @@ class SwooleConfig extends SplBean
     /**
      * TableSize Setter
      * @param int $tableSize
-     * @return SwooleConfig
+     * @return SwooleTableConfig
      */
-    public function setTableSize(int $tableSize): SwooleConfig
+    public function setTableSize(int $tableSize): SwooleTableConfig
     {
         $this->tableSize = $tableSize;
         return $this;
@@ -48,9 +48,9 @@ class SwooleConfig extends SplBean
     /**
      * MaxKeySize Setter
      * @param int $maxKeySize
-     * @return SwooleConfig
+     * @return SwooleTableConfig
      */
-    public function setMaxKeySize(int $maxKeySize): SwooleConfig
+    public function setMaxKeySize(int $maxKeySize): SwooleTableConfig
     {
         $this->maxKeySize = $maxKeySize;
         return $this;
@@ -68,9 +68,9 @@ class SwooleConfig extends SplBean
     /**
      * MaxValueSize Setter
      * @param int $maxValueSize
-     * @return SwooleConfig
+     * @return SwooleTableConfig
      */
-    public function setMaxValueSize(int $maxValueSize): SwooleConfig
+    public function setMaxValueSize(int $maxValueSize): SwooleTableConfig
     {
         $this->maxValueSize = $maxValueSize;
         return $this;
@@ -88,9 +88,9 @@ class SwooleConfig extends SplBean
     /**
      * RecycleInterval Setter
      * @param int $recycleInterval
-     * @return SwooleConfig
+     * @return SwooleTableConfig
      */
-    public function setRecycleInterval(int $recycleInterval): SwooleConfig
+    public function setRecycleInterval(int $recycleInterval): SwooleTableConfig
     {
         $this->recycleInterval = $recycleInterval;
         return $this;
@@ -108,9 +108,9 @@ class SwooleConfig extends SplBean
     /**
      * ConflictProportion Setter
      * @param float $conflictProportion
-     * @return SwooleConfig
+     * @return SwooleTableConfig
      */
-    public function setConflictProportion(float $conflictProportion): SwooleConfig
+    public function setConflictProportion(float $conflictProportion): SwooleTableConfig
     {
         $this->conflictProportion = $conflictProportion;
         return $this;

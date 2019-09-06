@@ -2,11 +2,13 @@
 
 namespace SwooleKit\Cache\Drivers;
 
-use const false;
+use EasySwoole\Component\Pool\Exception\PoolObjectNumError;
+use Swoole\Coroutine;
 use SwooleKit\Cache\Config\RedisConfig;
 use SwooleKit\Cache\Pools\RedisPool;
-use Exception;
-use Swoole\Coroutine;
+use SwooleKit\Cache\Pools\RedisPoolObject;
+use Throwable;
+
 /**
  * Redis缓存
  * Class Redis
@@ -14,66 +16,80 @@ use Swoole\Coroutine;
  */
 class Redis extends AbstractDriver
 {
-    protected $config;
-    protected $redis;
-    protected $context = array();
+
+    /**
+     * redisConfig
+     * @var RedisConfig
+     */
+    protected $redisConfig;
+
+    /**
+     * redisClients
+     * @var RedisPoolObject[]
+     */
+    protected $redisContext = array();
+
+    /**
+     * redisPool
+     * @var RedisPool
+     */
+    protected $redisPool;
 
     /**
      * Redis constructor.
-     * @param null $config
+     * @param RedisConfig|null $redisConfig
      */
-    public function __construct(RedisConfig $config = null)
+    public function __construct(RedisConfig $redisConfig = null)
     {
-        if (is_null($config)) {
-            $config = new RedisConfig;
+        if (is_null($redisConfig)) {
+            $redisConfig = new RedisConfig;
         }
-        $this->config = $config;
+
+        $this->redisConfig = $redisConfig;
     }
 
     /**
      * 获取连接
-     * @return RedisPool
-     * @throws Exception
+     * @return RedisPoolObject
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     private function getClient()
     {
-        if (!$this->redis) {
-            $this->redis = new RedisPool($this->config);
+        if (!$this->redisPool) {
+            $this->redisPool = new RedisPool($this->redisConfig);
         }
-        if(!$this->redis){
-            throw new Exception('Redis Pool: empty!');
-        }
+
         // 协程结束自动回收链接
-        $coroutineId = Coroutine::getCid();
-        if (!isset($this->context[$coroutineId])) {
-            $this->context[$coroutineId] = $this->redis->getObj();;
-            Coroutine::defer(function () use ($coroutineId) {
-                $this->redis->recycleObj($this->context[$coroutineId]);
+        $coroutineId = Coroutine::getuid();
+        if (!isset($this->redisContext[$coroutineId])) {
+            $this->redisContext[$coroutineId] = $this->redisPool->getObj();;
+            defer(function () use ($coroutineId) {
+                $this->redisPool->recycleObj($this->redisContext[$coroutineId]);
             });
         }
-        return $this->redis;
+
+        return $this->redisContext[$coroutineId];
     }
 
     /**
      * 写入缓存
+     * 已开启内置序列化支持
      * @param string $key
      * @param mixed $value
      * @param null $expire
      * @return mixed
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function set($key, $value, $expire = null)
     {
-        if (is_null($expire)) {
-            $expire = 0;
-        }
-        $value =  $this->serialize($value);
         $client = $this->getClient();
         if ($expire) {
-            $result = $client->setEx($key, $expire, $value);
+            return $client->setex($key, intval($expire), $value);
         } else {
-            $result = $client->set($key, $value);
+            return $client->set($key, $value);
         }
-        return $result;
     }
 
     /**
@@ -81,16 +97,14 @@ class Redis extends AbstractDriver
      * @param string $key
      * @param null $default
      * @return bool|mixed
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function get($key, $default = null)
     {
         $client = $this->getClient();
-        $value=$client->get($key);
-        if (is_null($value) || false === $value) {
-            return false;
-        }
-        $content = $this->unserialize($value);
-        return $content;
+        $value = $client->get($key);
+        return $value === false ? $default : $value;
     }
 
     /**
@@ -98,11 +112,13 @@ class Redis extends AbstractDriver
      * @param $key
      * @param int $step
      * @return bool|int|mixed|string
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function inc($key, $step = 1)
     {
         $client = $this->getClient();
-        return $client->incrby($key, $step);
+        return $client->incrBy($key, $step);
     }
 
     /**
@@ -110,6 +126,8 @@ class Redis extends AbstractDriver
      * @param $key
      * @param int $step
      * @return bool|int|mixed|string
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function dec($key, $step = 1)
     {
@@ -121,6 +139,8 @@ class Redis extends AbstractDriver
      * 判断缓存是否存在
      * @param string $key
      * @return mixed
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function has($key)
     {
@@ -132,6 +152,8 @@ class Redis extends AbstractDriver
      * 删除缓存
      * @param string $key
      * @return mixed
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function delete($key)
     {
@@ -142,6 +164,8 @@ class Redis extends AbstractDriver
     /**
      * 清空缓存
      * @return mixed
+     * @throws PoolObjectNumError
+     * @throws Throwable
      */
     public function clear()
     {

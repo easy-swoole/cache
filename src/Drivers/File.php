@@ -99,21 +99,22 @@ class File extends AbstractDriver
     {
         $filename = $this->getCacheKey($key);
         if (!is_file($filename)) {
-            return false;
+            return $default;
         }
         $content = file_get_contents($filename);
         $this->expire = null;
         if (false !== $content) {
             $expire = (int)substr($content, 8, 12);
             if (0 != $expire && time() > filemtime($filename) + $expire) {
-                return false;
+                $this->unlink($filename);
+                return $default;
             }
             $this->expire = $expire;
             $content = substr($content, 32);
             $content = $this->unserialize($content);
             return $content;
         } else {
-            return false;
+            return $default;
         }
     }
 
@@ -187,7 +188,6 @@ class File extends AbstractDriver
                 if (is_array($matches)) {
                     array_map('unlink', $matches);
                 }
-                rmdir($path);
             } else {
                 unlink($path);
             }

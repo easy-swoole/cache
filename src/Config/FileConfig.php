@@ -27,7 +27,7 @@ class FileConfig extends SplBean
      */
     private function initDefaultConfig()
     {
-        $this->cachePath = sys_get_temp_dir();
+        $this->cachePath = sys_get_temp_dir() . '/SwkCache';
         $this->cachePrefix = null;
         $this->defaultExpire = 0;
     }

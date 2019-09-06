@@ -12,20 +12,29 @@ use SwooleKit\Cache\Config\RedisConfig;
  */
 class RedisPool extends AbstractPool
 {
+    /**
+     * 创建客户端对象
+     * @return RedisPoolObject|null
+     */
     protected function createObject()
     {
-        $config = new RedisConfig;
-        $redis = new RedisPoolObject;
-        $connected = $redis->connect($config->getHost(), $config->getPort());
-        if ($connected) {
-            if ($config->getAuth()) {
-                $redis->auth($config->getAuth());
-            }
-            if ($config->getDb()) {
-                $redis->select($config->getDb());
-            }
-            return $redis;
-        }
-        return null;
+        /** @var RedisConfig $redisConfig */
+        $redisConfig = $this->getConfig();
+        $redisClient = new RedisPoolObject;
+        $redisClient->connect($redisConfig->getHost(), $redisConfig->getPort());
+
+        // 设置当前客户端的配置参数
+        $redisClient->setOptions([
+            'timeout'            => $redisConfig->getExecTimeout(),
+            'serialize'          => $redisConfig->isSerialize(),
+            'reconnect'          => $redisConfig->getReconnect(),
+            'connect_timeout'    => $redisConfig->getConnectTimeout(),
+            'compatibility_mode' => $redisConfig->isCompatibilityMode()
+        ]);
+
+        !is_null($redisConfig->getDb()) && $redisClient->select($redisConfig->getDb());
+        !is_null($redisConfig->getAuth()) && $redisClient->auth($redisConfig->getAuth());
+
+        return $redisClient;
     }
 }

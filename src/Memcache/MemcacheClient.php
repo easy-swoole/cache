@@ -3,6 +3,7 @@
 
 namespace SwooleKit\Cache\Memcache;
 
+use Opis\Closure\SerializableClosure;
 use Swoole\Coroutine\Client as CoroutineClient;
 use SwooleKit\Cache\Exception\CacheException;
 
@@ -244,7 +245,6 @@ class MemcacheClient
 
     /**
      * 追加数据到末尾
-     * TODO if OPT_COMPRESSION is enabled, the operation should failed.
      * @param $key
      * @param $value
      * @param null $timeout
@@ -266,7 +266,6 @@ class MemcacheClient
 
     /**
      * 追加数据到开头
-     * TODO if OPT_COMPRESSION is enabled, the operation should failed.
      * @param $key
      * @param $value
      * @param null $timeout
@@ -275,7 +274,7 @@ class MemcacheClient
      */
     public function prepend($key, $value, $timeout = null)
     {
-        $reqPack = new Protocol(['opcode' => Opcode::OP_APPEND, 'key' => $key, 'value' => $value]);
+        $reqPack = new Protocol(['opcode' => Opcode::OP_PREPEND, 'key' => $key, 'value' => $value]);
         $resPack = $this->sendCommand($reqPack, $timeout);
 
         // 如果不存在这个Key则必定Prepend失败
@@ -316,7 +315,7 @@ class MemcacheClient
                 $value = $value ? TRUE : FALSE;
                 break;
             case self::FLAG_TYPE_SERIALIZED:
-                $value = unserialize($value);
+                $value = $this->unserialize($value);
                 break;
         }
 
@@ -440,7 +439,7 @@ class MemcacheClient
         } elseif (is_bool($value)) {
             $flag |= self::FLAG_TYPE_BOOL;
         } else {
-            $value = serialize($value);
+            $value = $this->serialize($value);
             $flag |= self::FLAG_TYPE_SERIALIZED;
         }
 
@@ -491,5 +490,33 @@ class MemcacheClient
     public function getResultMessage()
     {
         return $this->resultMessage;
+    }
+
+    /**
+     * 序列化数据
+     * @param $data
+     * @return string
+     */
+    protected function serialize($data): string
+    {
+        SerializableClosure::enterContext();
+        SerializableClosure::wrapClosures($data);
+        $data = serialize($data);
+        SerializableClosure::exitContext();
+        return $data;
+    }
+
+    /**
+     * 反序列化数据
+     * @param string $data
+     * @return mixed
+     */
+    protected function unserialize(string $data)
+    {
+        SerializableClosure::enterContext();
+        $data = unserialize($data);
+        SerializableClosure::unwrapClosures($data);
+        SerializableClosure::exitContext();
+        return $data;
     }
 }
