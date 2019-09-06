@@ -76,7 +76,7 @@ class Swoole extends AbstractDriver
         $this->timer = Timer::getInstance()->loop($interval, function () {
             $currentTime = time();
             foreach ($this->table as $cacheItem) {
-                if ($cacheItem['expire'] < $currentTime) {
+                if ($cacheItem['expire']!=0&&$cacheItem['expire'] < $currentTime) {
                     $this->table->del($cacheItem['key']);
                 }
             }
@@ -85,17 +85,27 @@ class Swoole extends AbstractDriver
 
     public function get($key, $default = null)
     {
-        // TODO: Implement get() method.
+        return $this->table->get($key, 'value');
     }
 
-    public function set($key, $value, $ttl = null)
+    public function set($key,$value, $ttl = null)
     {
-        // TODO: Implement set() method.
+        if (is_null($ttl)) {
+            $expire = 0;
+        }else{
+            $expire=time()+$ttl;
+        }
+        $arr=[
+            'key'    => $key,
+            'value'  => $value,
+            'expire' => $expire
+        ];
+        return $this->table->set($key,$arr);
     }
 
     public function delete($key)
     {
-        // TODO: Implement delete() method.
+        return $this->table->del($key);
     }
 
     /**
@@ -109,7 +119,7 @@ class Swoole extends AbstractDriver
 
     public function has($key)
     {
-        // TODO: Implement has() method.
+        return $this->table->exist($key);
     }
 
 
