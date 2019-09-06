@@ -3,6 +3,7 @@
 namespace SwooleKit\Cache\Memcache;
 
 use EasySwoole\Spl\SplBean;
+use Exception;
 
 /**
  * 二进制协议包
@@ -265,9 +266,9 @@ class Protocol extends SplBean
     public function __toString()
     {
         // 计算包各部分的长度
-        $keyLength = $this->getKey() ? strlen($this->getKey()) : 0x00;
-        $valueLength = $this->getValue() ? strlen($this->getValue()) : 0x00;
-        $extrasLength = $this->getExtras() ? strlen($this->getExtras()) : 0x00;
+        $keyLength = !is_null($this->getKey()) ? strlen($this->getKey()) : 0x00;
+        $valueLength = !is_null($this->getValue()) ? strlen($this->getValue()) : 0x00;
+        $extrasLength = !is_null($this->getExtras()) ? strlen($this->getExtras()) : 0x00;
         $totalBodyLength = $keyLength + $valueLength + $extrasLength;
 
         // 打包数据头部二进制
@@ -280,9 +281,63 @@ class Protocol extends SplBean
         );
 
         // 拼接包体数据为完整包
-        $this->getExtras() && $package .= $this->getExtras();
-        $this->getKey() && $package .= $this->getKey();
-        $this->getValue() && $package .= $this->getValue();
+
+        !is_null($this->getExtras()) && $package .= $this->getExtras();
+        !is_null($this->getKey()) && $package .= $this->getKey();
+        !is_null($this->getValue()) && $package .= $this->getValue();
         return $package;
+    }
+
+    /**
+     * 调试数据包
+     * @param $package
+     */
+    public static function debugPackage($package)
+    {
+        if ($package instanceof Protocol) {
+            $package = $package->__toString();
+        }
+        $packageBytes = str_split(strtoupper(bin2hex($package)), 2);
+
+        // 将传输的数据包显示为位图模式方便观察
+        echo "  |                       -- PACKAGE START --                       |\n";
+        echo "  Byte/     0       |       1       |       2       |       3       |\n";
+        echo "     /              |               |               |               |\n";
+        echo "    |0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|0 1 2 3 4 5 6 7|\n";
+
+        // 4byte in one column
+        $totalLine = intval(count($packageBytes) / 4) + 1;
+        for ($i = 0; $i < $totalLine; $i++) {
+            $lineSp = "    +---------------+---------------+---------------+---------------+\n";
+            if ($i === 6) $lineSp = str_replace('-', '+', $lineSp);
+            echo $lineSp . str_pad($i * 4, 4, ' ', STR_PAD_LEFT) . '|';
+            for ($j = 0; $j < 4; $j++) {
+                $offset = $i * 4 + $j;
+                if (isset($packageBytes[$offset])) {
+                    echo " 0x{$packageBytes[$offset]}          |";
+                }
+            }
+            echo PHP_EOL;
+        }
+
+        // bit reference
+        try {
+            $packageOpName = (new Opcode($packageBytes[1]))->getName();
+        } catch (\Throwable $throwable) {
+            $packageOpName = 'UNKNOWN';
+        }
+
+        echo PHP_EOL . 'Field        (offset) (value)' . PHP_EOL;
+        echo "Magic        (0)    : 0x" . $packageBytes[0] . PHP_EOL;
+        echo "Opcode       (1)    : 0x" . $packageBytes[1] . ' (' . $packageOpName . ')' . PHP_EOL;
+        echo "Key length   (2,3)  : 0x" . $packageBytes[2] . $packageBytes[3] . PHP_EOL;
+        echo "Extra length (4)    : 0x" . $packageBytes[4] . PHP_EOL;
+        echo "Data type    (5)    : 0x" . $packageBytes[5] . PHP_EOL;
+        echo "VB/Status    (6,7)  : 0x" . $packageBytes[6] . $packageBytes[7] . PHP_EOL;
+        echo "Total body   (8-11) : 0x" . implode('', array_splice($packageBytes, 8, 4)) . PHP_EOL;
+        echo "Opaque       (12-15): 0x" . implode('', array_splice($packageBytes, 12, 4)) . PHP_EOL;
+        echo "CAS          (16-23): 0x" . implode('', array_splice($packageBytes, 16, 8)) . PHP_EOL;
+
+        echo PHP_EOL;
     }
 }
