@@ -14,7 +14,7 @@ class RedisPoolObject extends Redis implements PoolObjectInterface
 {
     function gc()
     {
-
+        $this->close();
     }
 
     function objectRestore()

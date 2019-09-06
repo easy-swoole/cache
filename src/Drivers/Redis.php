@@ -6,6 +6,7 @@ use const false;
 use SwooleKit\Cache\Config\RedisConfig;
 use SwooleKit\Cache\Pools\RedisPool;
 use Exception;
+use Swoole\Coroutine;
 /**
  * Redis缓存
  * Class Redis
@@ -15,12 +16,13 @@ class Redis extends AbstractDriver
 {
     protected $config;
     protected $redis;
+    protected $context = array();
 
     /**
      * Redis constructor.
      * @param null $config
      */
-    public function __construct($config = null)
+    public function __construct(RedisConfig $config = null)
     {
         if (is_null($config)) {
             $config = new RedisConfig;
@@ -40,6 +42,14 @@ class Redis extends AbstractDriver
         }
         if(!$this->redis){
             throw new Exception('Redis Pool: empty!');
+        }
+        // 协程结束自动回收链接
+        $coroutineId = Coroutine::getCid();
+        if (!isset($this->context[$coroutineId])) {
+            $this->context[$coroutineId] = $this->redis->getObj();;
+            Coroutine::defer(function () use ($coroutineId) {
+                $this->redis->recycleObj($this->context[$coroutineId]);
+            });
         }
         return $this->redis;
     }
