@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Pools;
 
 use EasySwoole\Component\Pool\PoolObjectInterface;
@@ -7,24 +17,21 @@ use Swoole\Coroutine\Redis;
 
 /**
  * 协程Redis客户端
- * Class RedisPoolObject
- * @package EasySwoole\Cache\Pools
+ * Class RedisPoolObject.
  */
 class RedisPoolObject extends Redis implements PoolObjectInterface
 {
-    function gc()
+    public function gc()
     {
         $this->close();
     }
 
-    function objectRestore()
+    public function objectRestore()
     {
-
     }
 
-    function beforeUse(): bool
+    public function beforeUse(): bool
     {
         return true;
     }
-
 }

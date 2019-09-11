@@ -1,36 +1,44 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Memcache;
 
 use EasySwoole\Spl\SplEnum;
 
 /**
  * Memcache Status
- * Class Status
- * @package Memcache
+ * Class Status.
  */
 class Status extends SplEnum
 {
-
-    const STAT_NO_ERROR = 0x0000;
-    const STAT_KEY_NOTFOUND = 0x0001;
-    const STAT_KEY_EXISTS = 0x0002;
-    const STAT_VALUE_TOO_LARGE = 0x0003;
-    const STAT_INVALID_ARGS = 0x0004;
-    const STAT_ITEM_NOT_STORED = 0x0005;
+    const STAT_NO_ERROR          = 0x0000;
+    const STAT_KEY_NOTFOUND      = 0x0001;
+    const STAT_KEY_EXISTS        = 0x0002;
+    const STAT_VALUE_TOO_LARGE   = 0x0003;
+    const STAT_INVALID_ARGS      = 0x0004;
+    const STAT_ITEM_NOT_STORED   = 0x0005;
     const STAT_INCR_DECR_INVALID = 0x0006;
-    const STAT_V_BUCKET_INVALID = 0x0007;
-    const STAT_AUTH_ERROR = 0x0008;
-    const STAT_AUTH_CONTINUE = 0x0009;
-    const STAT_UNKNOWN_COMMAND = 0x0081;
-    const STAT_OUT_OF_MEMORY = 0x0082;
-    const STAT_NOT_SUPPORTED = 0x0083;
-    const STAT_INTERNAL_ERROR = 0x0084;
-    const STAT_SERVER_BUSY = 0x0085;
+    const STAT_V_BUCKET_INVALID  = 0x0007;
+    const STAT_AUTH_ERROR        = 0x0008;
+    const STAT_AUTH_CONTINUE     = 0x0009;
+    const STAT_UNKNOWN_COMMAND   = 0x0081;
+    const STAT_OUT_OF_MEMORY     = 0x0082;
+    const STAT_NOT_SUPPORTED     = 0x0083;
+    const STAT_INTERNAL_ERROR    = 0x0084;
+    const STAT_SERVER_BUSY       = 0x0085;
     const STAT_TEMPORARY_FAILURE = 0x0086;
 
     /**
-     * 转为错误信息
+     * 转为错误信息.
      * @param $code
      * @return mixed|string
      */
@@ -55,6 +63,6 @@ class Status extends SplEnum
             Status::STAT_TEMPORARY_FAILURE => 'Temporary failure',
         ];
 
-        return array_key_exists($code, $tips) ? $tips[$code] : 'Unknown Status: ' . $code;
+        return array_key_exists($code, $tips) ? $tips[$code] : 'Unknown Status: '.$code;
     }
 }

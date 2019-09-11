@@ -1,16 +1,25 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Drivers;
 
+use EasySwoole\Cache\Config\SwooleTableConfig;
 use EasySwoole\Component\Timer;
 use EasySwoole\Utility\Random;
 use Swoole\Table;
-use EasySwoole\Cache\Config\SwooleTableConfig;
 
 /**
  * SwooleTable缓存
- * Class Swoole
- * @package Drivers
+ * Class Swoole.
  */
 class SwooleTable extends AbstractDriver
 {
@@ -26,11 +35,11 @@ class SwooleTable extends AbstractDriver
      * Swoole constructor.
      * @param SwooleTableConfig|null $swooleConfig
      */
-    function __construct(SwooleTableConfig $swooleConfig = null)
+    public function __construct(SwooleTableConfig $swooleConfig = null)
     {
         $this->tableName = Random::character(32);
         if (!($swooleConfig instanceof SwooleTableConfig)) {
-            $swooleConfig = new SwooleTableConfig;
+            $swooleConfig = new SwooleTableConfig();
         }
 
         $this->swooleConfig = $swooleConfig;
@@ -49,7 +58,7 @@ class SwooleTable extends AbstractDriver
     }
 
     /**
-     * 初始化数据表
+     * 初始化数据表.
      * @return mixed
      */
     private function initSwooleTable()
@@ -65,11 +74,12 @@ class SwooleTable extends AbstractDriver
         foreach ($this->tableStructure as $columnName => $columnStruct) {
             $this->table->column($columnName, $columnStruct['type'], $columnStruct['size']);
         }
+
         return $this->table->create();
     }
 
     /**
-     * 周期性回收
+     * 周期性回收.
      * @param int $interval
      */
     private function initRecycleTimer($interval = 1000)
@@ -86,8 +96,8 @@ class SwooleTable extends AbstractDriver
 
     /**
      * 获取一个值
-     * @param string $key
-     * @param null $default
+     * @param  string $key
+     * @param  null   $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -96,19 +106,21 @@ class SwooleTable extends AbstractDriver
         if ($value !== false) {
             return $value['serialize'] === 1 ? $this->unserialize($value['value']) : $value;
         }
+
         return $default;
     }
 
     /**
      * 设置一个值
-     * @param string $key
-     * @param mixed $value
-     * @param null $ttl
+     * @param  string     $key
+     * @param  mixed      $value
+     * @param  null       $ttl
      * @return bool|mixed
      */
     public function set($key, $value, $ttl = null)
     {
         list($isSerialize, $setValue) = $this->processValue($value);
+
         return $this->table->set($key, [
             'key'       => $key,
             'value'     => $setValue,
@@ -119,7 +131,7 @@ class SwooleTable extends AbstractDriver
 
     /**
      * 删除一个值
-     * @param string $key
+     * @param  string     $key
      * @return bool|mixed
      */
     public function delete($key)
@@ -128,7 +140,7 @@ class SwooleTable extends AbstractDriver
     }
 
     /**
-     * 清空并重建表
+     * 清空并重建表.
      * @return bool|mixed
      */
     public function clear()
@@ -137,8 +149,8 @@ class SwooleTable extends AbstractDriver
     }
 
     /**
-     * 值是否存在
-     * @param string $key
+     * 值是否存在.
+     * @param  string     $key
      * @return bool|mixed
      */
     public function has($key)
@@ -146,10 +158,9 @@ class SwooleTable extends AbstractDriver
         return $this->table->exist($key);
     }
 
-
     /**
-     * 缓存值序列化
-     * @param mixed $value
+     * 缓存值序列化.
+     * @param  mixed $value
      * @return array
      */
     private function processValue($value)
@@ -157,6 +168,7 @@ class SwooleTable extends AbstractDriver
         if (is_array($value) || is_object($value)) {
             return [1, $this->serialize($value)];
         }
+
         return [0, $value];
     }
 }

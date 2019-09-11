@@ -1,13 +1,22 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Config;
 
 use EasySwoole\Spl\SplBean;
 
 /**
  * 文件缓存配置
- * Class FileConfig
- * @package Config
+ * Class FileConfig.
  */
 class FileConfig extends SplBean
 {
@@ -15,7 +24,7 @@ class FileConfig extends SplBean
     protected $cachePrefix;
     protected $defaultExpire;
 
-    function __construct(array $data = null, $autoCreateProperty = false)
+    public function __construct(array $data = null, $autoCreateProperty = false)
     {
         $this->initDefaultConfig();
         parent::__construct($data, $autoCreateProperty);
@@ -27,13 +36,13 @@ class FileConfig extends SplBean
      */
     private function initDefaultConfig()
     {
-        $this->cachePath = sys_get_temp_dir() . '/SwkCache';
-        $this->cachePrefix = null;
+        $this->cachePath     = sys_get_temp_dir().'/SwkCache';
+        $this->cachePrefix   = null;
         $this->defaultExpire = 0;
     }
 
     /**
-     * 获取缓存目录
+     * 获取缓存目录.
      * @return mixed
      */
     public function getCachePath()
@@ -42,7 +51,7 @@ class FileConfig extends SplBean
     }
 
     /**
-     * 设置缓存目录
+     * 设置缓存目录.
      * @param string $cachePath
      */
     public function setCachePath(string $cachePath): void
@@ -69,7 +78,7 @@ class FileConfig extends SplBean
     }
 
     /**
-     * 获取缓存超时
+     * 获取缓存超时.
      * @return mixed
      */
     public function getDefaultExpire()
@@ -78,7 +87,7 @@ class FileConfig extends SplBean
     }
 
     /**
-     * 设置缓存超时
+     * 设置缓存超时.
      * @param int $defaultExpire
      */
     public function setDefaultExpire(int $defaultExpire): void

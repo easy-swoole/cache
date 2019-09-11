@@ -1,30 +1,36 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Pools;
 
-use EasySwoole\Component\Pool\PoolObjectInterface;
 use EasySwoole\Cache\Memcache\MemcacheClient;
+use EasySwoole\Component\Pool\PoolObjectInterface;
 
 /**
  * Memcache Pool Client
- * Class MemcachePoolObject
- * @package EasySwoole\Cache\Pools
+ * Class MemcachePoolObject.
  */
 class MemcachePoolObject extends MemcacheClient implements PoolObjectInterface
 {
-    function gc()
+    public function gc()
     {
-
     }
 
-    function objectRestore()
+    public function objectRestore()
     {
-
     }
 
-    function beforeUse(): bool
+    public function beforeUse(): bool
     {
         return true;
     }
-
 }

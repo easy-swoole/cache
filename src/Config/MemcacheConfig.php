@@ -1,12 +1,21 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Config;
 
 use EasySwoole\Component\Pool\PoolConf;
 
 /**
- * Class MemcacheConfig
- * @package Config
+ * Class MemcacheConfig.
  */
 class MemcacheConfig extends PoolConf
 {
@@ -14,7 +23,7 @@ class MemcacheConfig extends PoolConf
     protected $port = 11211;
 
     /**
-     * Host Getter
+     * Host Getter.
      * @return mixed
      */
     public function getHost()
@@ -23,7 +32,7 @@ class MemcacheConfig extends PoolConf
     }
 
     /**
-     * Host Setter
+     * Host Setter.
      * @param mixed $host
      */
     public function setHost($host): void
@@ -32,7 +41,7 @@ class MemcacheConfig extends PoolConf
     }
 
     /**
-     * Port Getter
+     * Port Getter.
      * @return mixed
      */
     public function getPort()
@@ -41,7 +50,7 @@ class MemcacheConfig extends PoolConf
     }
 
     /**
-     * Port Setter
+     * Port Setter.
      * @param mixed $port
      */
     public function setPort($port): void
