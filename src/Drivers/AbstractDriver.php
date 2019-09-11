@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Drivers;
 
 use Opis\Closure\SerializableClosure;
@@ -9,53 +19,51 @@ use function unserialize;
 
 /**
  * 抽象驱动类
- * Class AbstractDriver
- * @package EasySwoole\Cache\Drivers
+ * Class AbstractDriver.
  */
 abstract class AbstractDriver implements CacheInterface
 {
-
     /**
-     * 获取缓存
-     * @param string $key
-     * @param null $default
+     * 获取缓存.
+     * @param  string $key
+     * @param  null   $default
      * @return mixed
      */
     abstract public function get($key, $default = null);
 
     /**
-     * 设置缓存
-     * @param string $key
-     * @param mixed $value
-     * @param null $ttl
+     * 设置缓存.
+     * @param  string $key
+     * @param  mixed  $value
+     * @param  null   $ttl
      * @return bool
      */
     abstract public function set($key, $value, $ttl = null);
 
     /**
-     * 删除缓存
-     * @param string $key
+     * 删除缓存.
+     * @param  string $key
      * @return bool
      */
     abstract public function delete($key);
 
     /**
-     * 清空缓存
+     * 清空缓存.
      * @return bool
      */
     abstract public function clear();
 
     /**
-     * 缓存是否存在
-     * @param string $key
+     * 缓存是否存在.
+     * @param  string $key
      * @return bool
      */
     abstract public function has($key);
 
     /**
-     * 批量获取缓存
-     * @param iterable $keys
-     * @param null $default
+     * 批量获取缓存.
+     * @param  iterable       $keys
+     * @param  null           $default
      * @return array|iterable
      */
     public function getMultiple($keys, $default = null)
@@ -64,13 +72,14 @@ abstract class AbstractDriver implements CacheInterface
         foreach ($keys as $key) {
             $result[$key] = $this->get($key, $default);
         }
+
         return $result;
     }
 
     /**
-     * 批量设置缓存
-     * @param iterable $values
-     * @param null $ttl
+     * 批量设置缓存.
+     * @param  iterable $values
+     * @param  null     $ttl
      * @return bool
      */
     public function setMultiple($values, $ttl = null)
@@ -81,12 +90,13 @@ abstract class AbstractDriver implements CacheInterface
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * 批量删除缓存
-     * @param iterable $keys
+     * 批量删除缓存.
+     * @param  iterable $keys
      * @return bool
      */
     public function deleteMultiple($keys)
@@ -97,11 +107,12 @@ abstract class AbstractDriver implements CacheInterface
                 return false;
             }
         }
+
         return true;
     }
 
     /**
-     * 序列化数据
+     * 序列化数据.
      * @param $data
      * @return string
      */
@@ -111,12 +122,13 @@ abstract class AbstractDriver implements CacheInterface
         SerializableClosure::wrapClosures($data);
         $data = serialize($data);
         SerializableClosure::exitContext();
+
         return $data;
     }
 
     /**
-     * 反序列化数据
-     * @param string $data
+     * 反序列化数据.
+     * @param  string $data
      * @return mixed
      */
     protected function unserialize(string $data)
@@ -125,6 +137,7 @@ abstract class AbstractDriver implements CacheInterface
         $data = unserialize($data);
         SerializableClosure::unwrapClosures($data);
         SerializableClosure::exitContext();
+
         return $data;
     }
 }

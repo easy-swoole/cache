@@ -1,14 +1,22 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Memcache;
 
 use EasySwoole\Spl\SplBean;
-use Exception;
 
 /**
  * 二进制协议包
- * Class Protocol
- * @package Memcache
+ * Class Protocol.
  * @see https://github.com/memcached/memcached/wiki/BinaryProtocolRevamped
  */
 class Protocol extends SplBean
@@ -28,7 +36,7 @@ class Protocol extends SplBean
     protected $value;
 
     /**
-     * Magic Getter
+     * Magic Getter.
      * @return mixed
      */
     public function getMagic()
@@ -37,18 +45,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Magic Setter
-     * @param mixed $magic
+     * Magic Setter.
+     * @param  mixed    $magic
      * @return Protocol
      */
     public function setMagic($magic)
     {
         $this->magic = $magic;
+
         return $this;
     }
 
     /**
-     * Opcode Getter
+     * Opcode Getter.
      * @return mixed
      */
     public function getOpcode()
@@ -57,18 +66,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Opcode Setter
-     * @param mixed $opcode
+     * Opcode Setter.
+     * @param  mixed    $opcode
      * @return Protocol
      */
     public function setOpcode($opcode)
     {
         $this->opcode = $opcode;
+
         return $this;
     }
 
     /**
-     * DataType Getter
+     * DataType Getter.
      * @return mixed
      */
     public function getDataType()
@@ -77,18 +87,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * DataType Setter
-     * @param mixed $dataType
+     * DataType Setter.
+     * @param  mixed    $dataType
      * @return Protocol
      */
     public function setDataType($dataType)
     {
         $this->dataType = $dataType;
+
         return $this;
     }
 
     /**
-     * Status Getter
+     * Status Getter.
      * @return mixed
      */
     public function getStatus()
@@ -97,18 +108,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Status Setter
-     * @param mixed $status
+     * Status Setter.
+     * @param  mixed    $status
      * @return Protocol
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 
     /**
-     * Opaque Getter
+     * Opaque Getter.
      * @return mixed
      */
     public function getOpaque()
@@ -117,18 +129,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Opaque Setter
-     * @param mixed $opaque
+     * Opaque Setter.
+     * @param  mixed    $opaque
      * @return Protocol
      */
     public function setOpaque($opaque)
     {
         $this->opaque = $opaque;
+
         return $this;
     }
 
     /**
-     * Cas1 Getter
+     * Cas1 Getter.
      * @return mixed
      */
     public function getCas1()
@@ -137,18 +150,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Cas1 Setter
-     * @param mixed $cas1
+     * Cas1 Setter.
+     * @param  mixed    $cas1
      * @return Protocol
      */
     public function setCas1($cas1)
     {
         $this->cas1 = $cas1;
+
         return $this;
     }
 
     /**
-     * Cas2 Getter
+     * Cas2 Getter.
      * @return mixed
      */
     public function getCas2()
@@ -157,18 +171,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Cas2 Setter
-     * @param mixed $cas2
+     * Cas2 Setter.
+     * @param  mixed    $cas2
      * @return Protocol
      */
     public function setCas2($cas2)
     {
         $this->cas2 = $cas2;
+
         return $this;
     }
 
     /**
-     * Extras Getter
+     * Extras Getter.
      * @return mixed
      */
     public function getExtras()
@@ -177,18 +192,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Extras Setter
-     * @param mixed $extras
+     * Extras Setter.
+     * @param  mixed    $extras
      * @return Protocol
      */
     public function setExtras($extras)
     {
         $this->extras = $extras;
+
         return $this;
     }
 
     /**
-     * Key Getter
+     * Key Getter.
      * @return mixed
      */
     public function getKey()
@@ -197,18 +213,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Key Setter
-     * @param mixed $key
+     * Key Setter.
+     * @param  mixed    $key
      * @return Protocol
      */
     public function setKey($key)
     {
         $this->key = $key;
+
         return $this;
     }
 
     /**
-     * Value Getter
+     * Value Getter.
      * @return mixed
      */
     public function getValue()
@@ -217,18 +234,19 @@ class Protocol extends SplBean
     }
 
     /**
-     * Value Setter
-     * @param mixed $value
+     * Value Setter.
+     * @param  mixed    $value
      * @return Protocol
      */
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
     /**
-     * 数据解包
+     * 数据解包.
      * @param $binaryPackage
      */
     public function unpack($binaryPackage)
@@ -247,28 +265,28 @@ class Protocol extends SplBean
         // 除了头部还有其他的内容
         if ($header['bodylength']) {
             $bodyLength = $header['bodylength'];
-            $data = substr($binaryPackage, 24, $bodyLength);
+            $data       = substr($binaryPackage, 24, $bodyLength);
 
             // 解开额外信息
             if ($header['extralength']) {
                 $extraUnpacked = unpack('Nint', substr($data, 0, $header['extralength']));
-                $this->extras = $extraUnpacked['int'];
+                $this->extras  = $extraUnpacked['int'];
             }
-            $this->key = substr($data, $header['extralength'], $header['keylength']);
+            $this->key   = substr($data, $header['extralength'], $header['keylength']);
             $this->value = substr($data, $header['extralength'] + $header['keylength']);
         }
     }
 
     /**
-     * 数据打包
+     * 数据打包.
      * @return false|string
      */
     public function __toString()
     {
         // 计算包各部分的长度
-        $keyLength = !is_null($this->getKey()) ? strlen($this->getKey()) : 0x00;
-        $valueLength = !is_null($this->getValue()) ? strlen($this->getValue()) : 0x00;
-        $extrasLength = !is_null($this->getExtras()) ? strlen($this->getExtras()) : 0x00;
+        $keyLength       = !is_null($this->getKey()) ? strlen($this->getKey()) : 0x00;
+        $valueLength     = !is_null($this->getValue()) ? strlen($this->getValue()) : 0x00;
+        $extrasLength    = !is_null($this->getExtras()) ? strlen($this->getExtras()) : 0x00;
         $totalBodyLength = $keyLength + $valueLength + $extrasLength;
 
         // 打包数据头部二进制
@@ -285,11 +303,12 @@ class Protocol extends SplBean
         !is_null($this->getExtras()) && $package .= $this->getExtras();
         !is_null($this->getKey()) && $package .= $this->getKey();
         !is_null($this->getValue()) && $package .= $this->getValue();
+
         return $package;
     }
 
     /**
-     * 调试数据包
+     * 调试数据包.
      * @param $package
      */
     public static function debugPackage($package)
@@ -309,8 +328,10 @@ class Protocol extends SplBean
         $totalLine = intval(count($packageBytes) / 4) + 1;
         for ($i = 0; $i < $totalLine; $i++) {
             $lineSp = "    +---------------+---------------+---------------+---------------+\n";
-            if ($i === 6) $lineSp = str_replace('-', '+', $lineSp);
-            echo $lineSp . str_pad($i * 4, 4, ' ', STR_PAD_LEFT) . '|';
+            if ($i === 6) {
+                $lineSp = str_replace('-', '+', $lineSp);
+            }
+            echo $lineSp.str_pad($i * 4, 4, ' ', STR_PAD_LEFT).'|';
             for ($j = 0; $j < 4; $j++) {
                 $offset = $i * 4 + $j;
                 if (isset($packageBytes[$offset])) {
@@ -327,16 +348,16 @@ class Protocol extends SplBean
             $packageOpName = 'UNKNOWN';
         }
 
-        echo PHP_EOL . 'Field        (offset) (value)' . PHP_EOL;
-        echo "Magic        (0)    : 0x" . $packageBytes[0] . PHP_EOL;
-        echo "Opcode       (1)    : 0x" . $packageBytes[1] . ' (' . $packageOpName . ')' . PHP_EOL;
-        echo "Key length   (2,3)  : 0x" . $packageBytes[2] . $packageBytes[3] . PHP_EOL;
-        echo "Extra length (4)    : 0x" . $packageBytes[4] . PHP_EOL;
-        echo "Data type    (5)    : 0x" . $packageBytes[5] . PHP_EOL;
-        echo "VB/Status    (6,7)  : 0x" . $packageBytes[6] . $packageBytes[7] . PHP_EOL;
-        echo "Total body   (8-11) : 0x" . implode('', array_splice($packageBytes, 8, 4)) . PHP_EOL;
-        echo "Opaque       (12-15): 0x" . implode('', array_splice($packageBytes, 12, 4)) . PHP_EOL;
-        echo "CAS          (16-23): 0x" . implode('', array_splice($packageBytes, 16, 8)) . PHP_EOL;
+        echo PHP_EOL.'Field        (offset) (value)'.PHP_EOL;
+        echo 'Magic        (0)    : 0x'.$packageBytes[0].PHP_EOL;
+        echo 'Opcode       (1)    : 0x'.$packageBytes[1].' ('.$packageOpName.')'.PHP_EOL;
+        echo 'Key length   (2,3)  : 0x'.$packageBytes[2].$packageBytes[3].PHP_EOL;
+        echo 'Extra length (4)    : 0x'.$packageBytes[4].PHP_EOL;
+        echo 'Data type    (5)    : 0x'.$packageBytes[5].PHP_EOL;
+        echo 'VB/Status    (6,7)  : 0x'.$packageBytes[6].$packageBytes[7].PHP_EOL;
+        echo 'Total body   (8-11) : 0x'.implode('', array_splice($packageBytes, 8, 4)).PHP_EOL;
+        echo 'Opaque       (12-15): 0x'.implode('', array_splice($packageBytes, 12, 4)).PHP_EOL;
+        echo 'CAS          (16-23): 0x'.implode('', array_splice($packageBytes, 16, 8)).PHP_EOL;
 
         echo PHP_EOL;
     }

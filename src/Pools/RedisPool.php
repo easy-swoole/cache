@@ -1,14 +1,23 @@
 <?php
 
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
+ */
+
 namespace EasySwoole\Cache\Pools;
 
-use EasySwoole\Component\Pool\AbstractPool;
 use EasySwoole\Cache\Config\RedisConfig;
+use EasySwoole\Component\Pool\AbstractPool;
 
 /**
  * Redis Pools
- * Class RedisPool
- * @package EasySwoole\Cache\Pools
+ * Class RedisPool.
  */
 class RedisPool extends AbstractPool
 {
@@ -20,7 +29,7 @@ class RedisPool extends AbstractPool
     {
         /** @var RedisConfig $redisConfig */
         $redisConfig = $this->getConfig();
-        $redisClient = new RedisPoolObject;
+        $redisClient = new RedisPoolObject();
         $redisClient->connect($redisConfig->getHost(), $redisConfig->getPort());
 
         // 设置当前客户端的配置参数
@@ -29,7 +38,7 @@ class RedisPool extends AbstractPool
             'serialize'          => $redisConfig->isSerialize(),
             'reconnect'          => $redisConfig->getReconnect(),
             'connect_timeout'    => $redisConfig->getConnectTimeout(),
-            'compatibility_mode' => $redisConfig->isCompatibilityMode()
+            'compatibility_mode' => $redisConfig->isCompatibilityMode(),
         ]);
 
         !is_null($redisConfig->getDb()) && $redisClient->select($redisConfig->getDb());
