@@ -1,12 +1,12 @@
 <?php
 
-namespace SwooleKit\Cache\Config;
+namespace EasySwoole\Cache\Config;
 
 use EasySwoole\Spl\SplBean;
 
 /**
  * Class SwooleTableConfig
- * @package SwooleKit\Cache\Config
+ * @package EasySwoole\Cache\Config
  */
 class SwooleTableConfig extends SplBean
 {

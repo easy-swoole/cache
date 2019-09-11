@@ -1,10 +1,9 @@
 <?php
 
-namespace SwooleKit\Cache\Pools;
+namespace EasySwoole\Cache\Pools;
 
 use EasySwoole\Component\Pool\AbstractPool;
-use SwooleKit\Cache\Config\MemcacheConfig;
-use SwooleKit\Cache\Memcache\MemcacheClient;
+use EasySwoole\Cache\Config\MemcacheConfig;
 
 /**
  * Memcache Pools

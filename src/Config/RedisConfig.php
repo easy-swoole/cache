@@ -1,12 +1,12 @@
 <?php
 
-namespace SwooleKit\Cache\Config;
+namespace EasySwoole\Cache\Config;
 
 use EasySwoole\Component\Pool\PoolConf;
 
 /**
  * Class RedisConfig
- * @package SwooleKit\Cache\Config
+ * @package EasySwoole\Cache\Config
  */
 class RedisConfig extends PoolConf
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace SwooleKit\Cache\Drivers;
+namespace EasySwoole\Cache\Drivers;
 
 use EasySwoole\Component\Pool\Exception\PoolObjectNumError;
 use Swoole\Coroutine;
-use SwooleKit\Cache\Config\RedisConfig;
-use SwooleKit\Cache\Pools\RedisPool;
-use SwooleKit\Cache\Pools\RedisPoolObject;
+use EasySwoole\Cache\Config\RedisConfig;
+use EasySwoole\Cache\Pools\RedisPool;
+use EasySwoole\Cache\Pools\RedisPoolObject;
 use Throwable;
 
 /**

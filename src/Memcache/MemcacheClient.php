@@ -1,11 +1,11 @@
 <?php
 
 
-namespace SwooleKit\Cache\Memcache;
+namespace EasySwoole\Cache\Memcache;
 
 use Opis\Closure\SerializableClosure;
 use Swoole\Coroutine\Client as CoroutineClient;
-use SwooleKit\Cache\Exception\CacheException;
+use EasySwoole\Cache\Exception\CacheException;
 
 /**
  * Memcache客户端

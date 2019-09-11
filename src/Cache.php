@@ -1,10 +1,10 @@
 <?php
 
-namespace SwooleKit\Cache;
+namespace EasySwoole\Cache;
 
-use SwooleKit\Cache\Drivers\AbstractDriver;
-use SwooleKit\Cache\Drivers\File as FileDriver;
-use SwooleKit\Cache\Exception\CacheException;
+use EasySwoole\Cache\Drivers\AbstractDriver;
+use EasySwoole\Cache\Drivers\File as FileDriver;
+use EasySwoole\Cache\Exception\CacheException;
 
 /**
  * 缓存管理器
@@ -17,7 +17,7 @@ use SwooleKit\Cache\Exception\CacheException;
  * @method static bool setMultiple($values, $ttl = null)
  * @method static bool deleteMultiple($keys)
  * @method static bool has($key)
- * @package SwooleKit\Cache
+ * @package EasySwoole\Cache
  */
 class Cache
 {

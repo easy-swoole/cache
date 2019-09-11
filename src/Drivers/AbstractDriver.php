@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleKit\Cache\Drivers;
+namespace EasySwoole\Cache\Drivers;
 
 use Opis\Closure\SerializableClosure;
 use Psr\SimpleCache\CacheInterface;
@@ -10,7 +10,7 @@ use function unserialize;
 /**
  * 抽象驱动类
  * Class AbstractDriver
- * @package SwooleKit\Cache\Drivers
+ * @package EasySwoole\Cache\Drivers
  */
 abstract class AbstractDriver implements CacheInterface
 {

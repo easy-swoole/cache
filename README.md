@@ -13,7 +13,7 @@ Coroutine Cache
 
 ```php
 
-use SwooleKit\Cache\Cache;
+use EasySwoole\Cache\Cache;
 
 $ttl = 10;  // 单位秒
 $cacheKey = 'cacheKey';
@@ -42,8 +42,8 @@ Cache::deleteMultiple(['CacheKey1']);
 ```php
 
 // 请注意先Use要使用的驱动类和配置类
-use SwooleKit\Cache\Config\FileConfig;
-use SwooleKit\Cache\Drivers\File as FileDriver;
+use EasySwoole\Cache\Config\FileConfig;
+use EasySwoole\Cache\Drivers\File as FileDriver;
 
 // 也可以不传入Config 自动使用下面的默认值
 $fileDriver = new FileDriver((new FileConfig([
@@ -71,8 +71,8 @@ $cache = Cache::instance()->getDriver('default');
 ```php
 
 // 请注意先Use要使用的驱动类和配置类
-use SwooleKit\Cache\Config\RedisConfig;
-use SwooleKit\Cache\Drivers\Redis as RedisDriver;
+use EasySwoole\Cache\Config\RedisConfig;
+use EasySwoole\Cache\Drivers\Redis as RedisDriver;
 
 // 需要协程环境(在EasySwoole框架内无需手动创建协程)
 Coroutine::create(function () {
@@ -111,8 +111,8 @@ Coroutine::create(function () {
 ```php
 
 // 请注意先Use要使用的驱动类和配置类
-use SwooleKit\Cache\Config\MemcacheConfig;
-use SwooleKit\Cache\Drivers\Memcache as MemcacheDriver;
+use EasySwoole\Cache\Config\MemcacheConfig;
+use EasySwoole\Cache\Drivers\Memcache as MemcacheDriver;
 
 // 需要协程环境(在EasySwoole框架内无需手动创建协程)
 Coroutine::create(function () {
@@ -148,14 +148,14 @@ Coroutine::create(function () {
 ```php
 
 // 请注意先Use要使用的驱动类和配置类
-use SwooleKit\Cache\Config\SwooleTableConfig;
-use SwooleKit\Cache\Drivers\SwooleTable as SwooleTableDriver;
+use EasySwoole\Cache\Config\SwooleTableConfig;
+use EasySwoole\Cache\Drivers\SwooleTable as SwooleTableDriver;
 
 // 需要协程环境(在EasySwoole框架内无需手动创建协程)
 Coroutine::create(function () {
 
     // 可以配置Table相关的一些配置项
-    $memcacheDriver = new SwooleTableDriver((new SwooleTableConfig([
+    $swooleTableDriver = new SwooleTableDriver((new SwooleTableConfig([
 
         'tableSize'          => 4096,  // 能容纳的总Key数量(由于哈希冲突，实际储存量会比该值小一点)
         'maxKeySize'         => 512,   // Key支持的最大长度(字节)
@@ -165,7 +165,7 @@ Coroutine::create(function () {
 
     ])));
 
-    Cache::instance()->addDriver($memcacheDriver, 'swTable');
+    Cache::instance()->addDriver($swooleTableDriver, 'swTable');
     $cache = Cache::instance()->getDriver('swTable');
 });
 
@@ -177,7 +177,7 @@ Coroutine::create(function () {
 
 ```php
 
-use SwooleKit\Cache\Config\SwooleTableConfig;
+use EasySwoole\Cache\Config\SwooleTableConfig;
 
 $tableConfig = new SwooleTableConfig;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleKit\Cache\Pools;
+namespace EasySwoole\Cache\Pools;
 
 use EasySwoole\Component\Pool\PoolObjectInterface;
 use Swoole\Coroutine\Redis;
@@ -8,7 +8,7 @@ use Swoole\Coroutine\Redis;
 /**
  * 协程Redis客户端
  * Class RedisPoolObject
- * @package SwooleKit\Cache\Pools
+ * @package EasySwoole\Cache\Pools
  */
 class RedisPoolObject extends Redis implements PoolObjectInterface
 {

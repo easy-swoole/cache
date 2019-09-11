@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleKit\Cache\Memcache;
+namespace EasySwoole\Cache\Memcache;
 
 use EasySwoole\Spl\SplBean;
 use Exception;

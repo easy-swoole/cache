@@ -1,14 +1,14 @@
 <?php
 
-namespace SwooleKit\Cache\Pools;
+namespace EasySwoole\Cache\Pools;
 
 use EasySwoole\Component\Pool\AbstractPool;
-use SwooleKit\Cache\Config\RedisConfig;
+use EasySwoole\Cache\Config\RedisConfig;
 
 /**
  * Redis Pools
  * Class RedisPool
- * @package SwooleKit\Cache\Pools
+ * @package EasySwoole\Cache\Pools
  */
 class RedisPool extends AbstractPool
 {

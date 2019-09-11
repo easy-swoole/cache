@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleKit\Cache\Config;
+namespace EasySwoole\Cache\Config;
 
 use EasySwoole\Component\Pool\PoolConf;
 

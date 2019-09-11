@@ -1,14 +1,14 @@
 <?php
 
-namespace SwooleKit\Cache\Drivers;
+namespace EasySwoole\Cache\Drivers;
 
 use EasySwoole\Component\Pool\Exception\PoolObjectNumError;
 use Swoole\Coroutine;
-use SwooleKit\Cache\Config\MemcacheConfig;
-use SwooleKit\Cache\Exception\CacheException;
-use SwooleKit\Cache\Memcache\MemcacheClient;
-use SwooleKit\Cache\Memcache\Status;
-use SwooleKit\Cache\Pools\MemcachePool;
+use EasySwoole\Cache\Config\MemcacheConfig;
+use EasySwoole\Cache\Exception\CacheException;
+use EasySwoole\Cache\Memcache\MemcacheClient;
+use EasySwoole\Cache\Memcache\Status;
+use EasySwoole\Cache\Pools\MemcachePool;
 use Throwable;
 
 /**

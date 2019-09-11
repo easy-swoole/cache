@@ -1,14 +1,14 @@
 <?php
 
-namespace SwooleKit\Cache\Pools;
+namespace EasySwoole\Cache\Pools;
 
 use EasySwoole\Component\Pool\PoolObjectInterface;
-use SwooleKit\Cache\Memcache\MemcacheClient;
+use EasySwoole\Cache\Memcache\MemcacheClient;
 
 /**
  * Memcache Pool Client
  * Class MemcachePoolObject
- * @package SwooleKit\Cache\Pools
+ * @package EasySwoole\Cache\Pools
  */
 class MemcachePoolObject extends MemcacheClient implements PoolObjectInterface
 {

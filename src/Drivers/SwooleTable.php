@@ -1,11 +1,11 @@
 <?php
 
-namespace SwooleKit\Cache\Drivers;
+namespace EasySwoole\Cache\Drivers;
 
 use EasySwoole\Component\Timer;
 use EasySwoole\Utility\Random;
 use Swoole\Table;
-use SwooleKit\Cache\Config\SwooleTableConfig;
+use EasySwoole\Cache\Config\SwooleTableConfig;
 
 /**
  * SwooleTable缓存

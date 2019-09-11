@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleKit\Cache\Exception;
+namespace EasySwoole\Cache\Exception;
 
 use \Psr\SimpleCache\InvalidArgumentException as PsrInvalidArgumentException;
 

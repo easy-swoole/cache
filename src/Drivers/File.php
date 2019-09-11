@@ -1,9 +1,9 @@
 <?php
 
-namespace SwooleKit\Cache\Drivers;
+namespace EasySwoole\Cache\Drivers;
 
 use Exception;
-use SwooleKit\Cache\Config\FileConfig;
+use EasySwoole\Cache\Config\FileConfig;
 
 /**
  * 文件缓存
