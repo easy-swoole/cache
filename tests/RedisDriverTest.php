@@ -1,10 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Manlin
- * Date: 2019/9/12
- * Time: 下午9:55
+
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
  */
+
 namespace EasySwoole\Cache\Test;
 
 use EasySwoole\Cache\Cache;
@@ -18,9 +23,9 @@ class RedisDriverTest extends TestCase
 
     /**
      * FileDriverTest constructor.
-     * @param null|string $name
-     * @param array       $data
-     * @param string      $dataName
+     * @param  null|string                                $name
+     * @param  array                                      $data
+     * @param  string                                     $dataName
      * @throws \EasySwoole\Cache\Exception\CacheException
      * @throws \Exception
      */
@@ -43,7 +48,7 @@ class RedisDriverTest extends TestCase
             'maxIdleTime'       => 15,          // 连接最大空闲时间(超时释放)
             'maxObjectNum'      => 20,          // 池最大连接象数量
             'minObjectNum'      => 5,           // 保持的最小连接数量
-            'getObjectTimeout'  => 3.0          // 池为空时获取连接最大等待时间
+            'getObjectTimeout'  => 3.0,          // 池为空时获取连接最大等待时间
 
         ])));
 
@@ -98,7 +103,7 @@ class RedisDriverTest extends TestCase
     {
         Cache::setMultiple([
             'set1' => 1,
-            'set2' => 2
+            'set2' => 2,
         ], 10);
         $this->assertEquals(['set1' => 1], Cache::getMultiple(['set1'], 0));
         $this->assertEquals(['set1' => 1, 'set2' => 2], Cache::getMultiple(['set1', 'set2'], 0));
@@ -109,7 +114,7 @@ class RedisDriverTest extends TestCase
     {
         Cache::setMultiple([
             'set4' => 4,
-            'set5' => 5
+            'set5' => 5,
         ]);
         $this->assertEquals(['set4' => 4, 'set5' => 5], Cache::getMultiple(['set4', 'set5'], 0));
         Cache::deleteMultiple(['set4', 'set5']);
