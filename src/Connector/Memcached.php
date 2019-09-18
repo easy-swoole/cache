@@ -26,14 +26,14 @@ class Memcached extends AbstractCache
     protected static $instance;
 
     protected $options = [
-        'host' => '127.0.0.1',  // Memcache服务器
-        'port' => 11211,        // Memcache端口
-        'expire' => 0,            // 默认缓存过期时间
-        'timeout' => 0,            // 超时时间（单位：毫秒）
-        'prefix' => '',           // 缓存后缀
+        'host'     => '127.0.0.1',  // Memcache服务器
+        'port'     => 11211,        // Memcache端口
+        'expire'   => 0,            // 默认缓存过期时间
+        'timeout'  => 0,            // 超时时间（单位：毫秒）
+        'prefix'   => '',           // 缓存后缀
         'username' => '',           // Memcache账号
         'password' => '',           // Memcache密码
-        'option' => [],           // Memcache连接配置
+        'option'   => [],           // Memcache连接配置
     ];
 
     /**
@@ -57,7 +57,7 @@ class Memcached extends AbstractCache
     /**
      * Increment the value of the storage.
      *
-     * @param string $name The name of the item in store.
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to increment, must be an integer.
      *
      * @author : evalor <master@evalor.cn>
@@ -68,6 +68,7 @@ class Memcached extends AbstractCache
     {
         $this->connect();
         $key = $this->getCacheKey($name);
+
         return self::$instance->increment($key, $step);
     }
 
@@ -99,7 +100,7 @@ class Memcached extends AbstractCache
 
             // connection establishment
             $servers = [];
-            foreach ((array)$hosts as $i => $host) {
+            foreach ((array) $hosts as $i => $host) {
                 $servers[] = [$host, (isset($ports[$i]) ? $ports[$i] : $ports[0]), 1];
             }
 
@@ -115,7 +116,7 @@ class Memcached extends AbstractCache
     /**
      * Decrement the value of the storage.
      *
-     * @param string $name The name of the item in store.
+     * @param string   $name The name of the item in store.
      * @param int|null $step The value to decrement, must be an integer.
      *
      * @author : evalor <master@evalor.cn>
@@ -126,6 +127,7 @@ class Memcached extends AbstractCache
     {
         $this->connect();
         $key = $this->getCacheKey($name);
+
         return self::$instance->decrement($key, $step);
     }
 
@@ -133,14 +135,15 @@ class Memcached extends AbstractCache
     {
         $this->connect();
         $key = $this->getCacheKey($name);
+
         return self::$instance->add($key, $value, $ttl);
     }
 
     /**
      * Fetches a value from the cache and delete it.
      *
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
      *
      * @return mixed
      *
@@ -161,8 +164,8 @@ class Memcached extends AbstractCache
     /**
      * Fetches a value from the cache.
      *
-     * @param string $name The name of the item in store.
-     * @param mixed $default Default value to return if the key does not exist.
+     * @param string $name    The name of the item in store.
+     * @param mixed  $default Default value to return if the key does not exist.
      *
      * @author : evalor <master@evalor.cn>
      *
@@ -196,9 +199,9 @@ class Memcached extends AbstractCache
     /**
      * If the name does not exist, insert value.
      *
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
      *
      * @return bool
      *
@@ -233,9 +236,9 @@ class Memcached extends AbstractCache
     /**
      * Persists data in the cache, uniquely referenced by a name with an optional expiration TTL time.
      *
-     * @param string $name The name of the item to store.
-     * @param mixed $value The value of the item to store, must be serializable.
-     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     * @param string                $name  The name of the item to store.
+     * @param mixed                 $value The value of the item to store, must be serializable.
+     * @param null|int|DateInterval $ttl   Optional. The TTL value of this item. If no value is sent and
      *
      * @author : evalor <master@evalor.cn>
      *
