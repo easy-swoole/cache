@@ -11,7 +11,7 @@ Coroutine Cache
 
 ### 安装
 
-> composer require swoole-kit/cache
+> composer require easyswoole/cache
 
 ### 快速开始
 
