@@ -21,8 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "EasySwoole\\Cache\\": "src/"
-            "EasySwoole\\Cache\\Test\\":"tests/"
+            "EasySwoole\\Cache\\": "src/",
+            "EasySwoole\\Cache\\Test\\": "tests/"
         }
     },
     "require-dev": {
