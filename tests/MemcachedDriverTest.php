@@ -1,10 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Manlin
- * Date: 2019/9/13
- * Time: 下午11:34
+
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
  */
+
 namespace EasySwoole\Cache\Test;
 
 use EasySwoole\Cache\Cache;
@@ -15,11 +20,12 @@ use PHPUnit\Framework\TestCase;
 class MemcachedDriverTest extends TestCase
 {
     private $cache;
+
     /**
      * SwooleTableDriverTest constructor.
-     * @param null|string $name
-     * @param array       $data
-     * @param string      $dataName
+     * @param  null|string                                $name
+     * @param  array                                      $data
+     * @param  string                                     $dataName
      * @throws \EasySwoole\Cache\Exception\CacheException
      */
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
@@ -37,7 +43,7 @@ class MemcachedDriverTest extends TestCase
             'maxIdleTime'       => 15,          // 连接最大空闲时间(超时释放)
             'maxObjectNum'      => 20,          // 池最大连接象数量
             'minObjectNum'      => 5,           // 保持的最小连接数量
-            'getObjectTimeout'  => 3.0          // 池为空时获取连接最大等待时间
+            'getObjectTimeout'  => 3.0,          // 池为空时获取连接最大等待时间
 
         ])));
 

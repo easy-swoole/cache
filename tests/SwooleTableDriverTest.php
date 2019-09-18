@@ -1,10 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Manlin
- * Date: 2019/9/13
- * Time: 下午11:02
+
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
  */
+
 namespace EasySwoole\Cache\Test;
 
 use EasySwoole\Cache\Cache;
@@ -15,11 +20,12 @@ use PHPUnit\Framework\TestCase;
 class SwooleTableDriverTest extends TestCase
 {
     private $cache;
+
     /**
      * SwooleTableDriverTest constructor.
-     * @param null|string $name
-     * @param array       $data
-     * @param string      $dataName
+     * @param  null|string                                $name
+     * @param  array                                      $data
+     * @param  string                                     $dataName
      * @throws \EasySwoole\Cache\Exception\CacheException
      */
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
@@ -44,9 +50,9 @@ class SwooleTableDriverTest extends TestCase
     {
         $this->cache->set('key', 1);
         $this->assertEquals([
-            'key' => 'key',
-            'value' => 1,
-            'expire' => 0,
+            'key'       => 'key',
+            'value'     => 1,
+            'expire'    => 0,
             'serialize' => 0,
         ], $this->cache->get('key'));
     }

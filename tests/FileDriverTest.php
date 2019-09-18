@@ -1,10 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Manlin
- * Date: 2019/9/12
- * Time: 下午4:25
+
+/*
+ * +-------------------------------------
+ * | easySwoole framework unit
+ * +-------------------------------------
+ * | WebSite: https://www.easyswoole.com
+ * +-------------------------------------
+ * | Welcome Join QQGroup 633921431
+ * +-------------------------------------
  */
+
 namespace EasySwoole\Cache\Test;
 
 use EasySwoole\Cache\Cache;
@@ -16,9 +21,9 @@ class FileDriverTest extends TestCase
 {
     /**
      * FileDriverTest constructor.
-     * @param null|string $name
-     * @param array       $data
-     * @param string      $dataName
+     * @param  null|string                                $name
+     * @param  array                                      $data
+     * @param  string                                     $dataName
      * @throws \EasySwoole\Cache\Exception\CacheException
      * @throws \Exception
      */
@@ -26,9 +31,9 @@ class FileDriverTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         $fileDriver = new File(new FileConfig([
-            'cachePath' => sys_get_temp_dir(), // 缓存目录(默认为PHP系统缓存)
-            'cachePrefix' => null, // 默认的缓存前缀 不同前缀分目录存放
-            'defaultExpire' => 0 // 默认过期时间 设置为0永不过期
+            'cachePath'     => sys_get_temp_dir(), // 缓存目录(默认为PHP系统缓存)
+            'cachePrefix'   => null, // 默认的缓存前缀 不同前缀分目录存放
+            'defaultExpire' => 0, // 默认过期时间 设置为0永不过期
         ]));
         // 注册驱动时不指定驱动名称，则为注册default驱动
         // 仅default驱动可以多次注册，实际调用最后一次注册的default驱动
@@ -85,7 +90,7 @@ class FileDriverTest extends TestCase
     {
         Cache::setMultiple([
             'set1' => 1,
-            'set2' => 2
+            'set2' => 2,
         ], 10);
         $this->assertEquals(['set1' => 1], Cache::getMultiple(['set1'], 0));
         $this->assertEquals(['set1' => 1, 'set2' => 2], Cache::getMultiple(['set1', 'set2'], 0));
@@ -96,7 +101,7 @@ class FileDriverTest extends TestCase
     {
         Cache::setMultiple([
             'set4' => 4,
-            'set5' => 5
+            'set5' => 5,
         ]);
         $this->assertEquals(['set4' => 4, 'set5' => 5], Cache::getMultiple(['set4', 'set5'], 0));
         Cache::deleteMultiple(['set4', 'set5']);
