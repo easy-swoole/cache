@@ -22,10 +22,11 @@
     "autoload": {
         "psr-4": {
             "EasySwoole\\Cache\\": "src/"
+            "EasySwoole\\Cache\\Test\\":"tests/"
         }
     },
     "require-dev": {
         "easyswoole/swoole-ide-helper": "^1.3",
-        "phpunit/phpunit": "^8.3"
+        "easyswoole/phpunit": "^1.0"
     }
 }
