@@ -60,10 +60,10 @@ class Cache
      * 添加驱动.
      * @param AbstractDriver $driver
      * @param $driverName
-     * @throws CacheException
      * @return bool
+     * @throws CacheException
      */
-    public function addDriver($driver, $driverName = 'default')
+    public function addDriver(AbstractDriver $driver, $driverName = 'default')
     {
         // 不允许注册相同名称的Driver (但可以注册default来覆盖默认驱动)
         if ($driverName != 'default' && array_key_exists($driverName, $this->drivers)) {
@@ -82,9 +82,9 @@ class Cache
 
     /**
      * 获取一个驱动类.
-     * @param  string         $driverName
-     * @throws CacheException
+     * @param string $driverName
      * @return AbstractDriver
+     * @throws CacheException
      */
     public function getDriver($driverName = 'default')
     {
@@ -106,8 +106,8 @@ class Cache
      * 静态化调用.
      * @param $name
      * @param $arguments
-     * @throws CacheException
      * @return mixed
+     * @throws CacheException
      */
     public static function __callStatic($name, $arguments)
     {

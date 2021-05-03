@@ -12,12 +12,9 @@
 
 namespace EasySwoole\Cache\Drivers;
 
-use EasySwoole\Cache\Config\RedisConfig;
-use EasySwoole\Cache\Pools\RedisPool;
-use EasySwoole\Cache\Pools\RedisPoolObject;
-use EasySwoole\Component\Pool\Exception\PoolObjectNumError;
-use Swoole\Coroutine;
+use EasySwoole\RedisPool\Pool;
 use Throwable;
+use EasySwoole\Pool\Exception\PoolEmpty;
 
 /**
  * Redis缓存
@@ -26,164 +23,114 @@ use Throwable;
 class Redis extends AbstractDriver
 {
     /**
-     * redisConfig.
-     * @var RedisConfig
+     * @var Pool
      */
-    protected $redisConfig;
+    protected $pool;
 
-    /**
-     * redisClients.
-     * @var RedisPoolObject[]
-     */
-    protected $redisContext = [];
-
-    /**
-     * redisPool.
-     * @var RedisPool
-     */
-    protected $redisPool;
-
-    /**
-     * Redis constructor.
-     * @param RedisConfig|null $redisConfig
-     */
-    public function __construct(RedisConfig $redisConfig = null)
+    public function __construct(Pool $pool)
     {
-        if (is_null($redisConfig)) {
-            $redisConfig = new RedisConfig();
-        }
-
-        $this->redisConfig = $redisConfig;
+        $this->pool = $pool;
     }
 
     /**
-     * 获取连接.
-     * @throws PoolObjectNumError
+     * @param string $key
+     * @param mixed $value
+     * @param null $expire
+     * @return bool|mixed
      * @throws Throwable
-     * @return RedisPoolObject
-     */
-    private function getClient()
-    {
-        if (!$this->redisPool) {
-            $this->redisPool = new RedisPool($this->redisConfig);
-        }
-
-        // 协程结束自动回收链接
-        $coroutineId = Coroutine::getuid();
-        if (!isset($this->redisContext[$coroutineId])) {
-            $this->redisContext[$coroutineId] = $this->redisPool->getObj();
-            defer(function () use ($coroutineId) {
-                $this->redisPool->recycleObj($this->redisContext[$coroutineId]);
-            });
-        }
-
-        return $this->redisContext[$coroutineId];
-    }
-
-    /**
-     * 写入缓存
-     * 已开启内置序列化支持
-     * @param  string             $key
-     * @param  mixed              $value
-     * @param  null               $expire
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return mixed
+     * @throws PoolEmpty
      */
     public function set($key, $value, $expire = null)
     {
-        $client = $this->getClient();
-        if ($expire) {
-            return $client->setex($key, intval($expire), $value);
-        } else {
-            return $client->set($key, $value);
-        }
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key, $value, $expire) {
+            if ($expire) {
+                return $redis->setEx($key, intval($expire), $value);
+            } else {
+                return $redis->set($key, $value);
+            }
+        });
+
     }
 
     /**
-     * 读取缓存.
-     * @param  string             $key
-     * @param  null               $default
-     * @throws PoolObjectNumError
+     * @param string $key
+     * @param null $default
+     * @return mixed|null
      * @throws Throwable
-     * @return bool|mixed
+     * @throws PoolEmpty
      */
     public function get($key, $default = null)
     {
-        $client = $this->getClient();
-        $value  = $client->get($key);
+        $value = $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            return $redis->get($key);
+        });
 
         return $value === false ? $default : $value;
     }
 
     /**
-     * 自增缓存（针对数值缓存）.
      * @param $key
-     * @param  int                   $step
-     * @throws PoolObjectNumError
+     * @param int $step
+     * @return false|mixed
+     * @throws PoolEmpty
      * @throws Throwable
-     * @return bool|int|mixed|string
      */
     public function inc($key, $step = 1)
     {
-        $client = $this->getClient();
-
-        return $client->incrBy($key, $step);
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key, $step) {
+            return $redis->incrBy($key, $step);
+        });
     }
 
     /**
-     * 自减缓存（针对数值缓存）.
      * @param $key
-     * @param  int                   $step
-     * @throws PoolObjectNumError
+     * @param int $step
+     * @return false|mixed
+     * @throws PoolEmpty
      * @throws Throwable
-     * @return bool|int|mixed|string
      */
     public function dec($key, $step = 1)
     {
-        $client = $this->getClient();
-
-        return $client->decrby($key, $step);
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key, $step) {
+            return $redis->decrBy($key, $step);
+        });
     }
 
     /**
-     * 判断缓存是否存在.
-     * @param  string             $key
-     * @throws PoolObjectNumError
+     * @param string $key
+     * @return bool|mixed
+     * @throws PoolEmpty
      * @throws Throwable
-     * @return mixed
      */
     public function has($key)
     {
-        $client = $this->getClient();
-
-        return $client->exists($key);
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            return $redis->exists($key);
+        });
     }
 
     /**
-     * 删除缓存.
-     * @param  string             $key
-     * @throws PoolObjectNumError
+     * @param string $key
+     * @return bool|mixed
+     * @throws PoolEmpty
      * @throws Throwable
-     * @return mixed
      */
     public function delete($key)
     {
-        $client = $this->getClient();
-
-        return $client->del($key);
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            return $redis->del($key);
+        });
     }
 
     /**
-     * 清空缓存.
-     * @throws PoolObjectNumError
+     * @return bool|mixed
+     * @throws PoolEmpty
      * @throws Throwable
-     * @return mixed
      */
     public function clear()
     {
-        $client = $this->getClient();
-
-        return $client->flushDB();
+        return $this->pool->invoke(function (\EasySwoole\Redis\Redis $redis) {
+            return $redis->flushDb();
+        });
     }
 }
