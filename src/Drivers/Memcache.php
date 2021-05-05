@@ -12,14 +12,11 @@
 
 namespace EasySwoole\Cache\Drivers;
 
-use EasySwoole\Cache\Config\MemcacheConfig;
-use EasySwoole\Cache\Exception\CacheException;
-use EasySwoole\Cache\Memcache\MemcacheClient;
-use EasySwoole\Cache\Memcache\Status;
-use EasySwoole\Cache\Pools\MemcachePool;
-use EasySwoole\Component\Pool\Exception\PoolObjectNumError;
-use Swoole\Coroutine;
-use Throwable;
+use EasySwoole\Memcache\Opcode;
+use EasySwoole\Memcache\Package;
+use EasySwoole\Memcache\Status;
+use EasySwoole\MemcachePool\Pool;
+use EasySwoole\Pool\Exception\PoolEmpty;
 
 /**
  * Memcache缓存
@@ -27,159 +24,93 @@ use Throwable;
  */
 class Memcache extends AbstractDriver
 {
-    /**
-     * memcacheConfig.
-     * @var MemcacheConfig
-     */
-    protected $memcacheConfig;
 
     /**
-     * MemcacheClients.
-     * @var MemcacheClient[]
+     * @var Pool
      */
-    protected $memcacheContext = [];
+    protected $pool;
 
     /**
-     * MemcachePool.
-     * @var MemcachePool
+     * Memcache constructor.
+     * @param Pool $pool
      */
-    protected $memcachePool;
-
-    /**
-     * execTimeout.
-     * @var int
-     */
-    protected $execTimeout;
-
-    /**
-     * Memcached constructor.
-     * @param MemcacheConfig $memcacheConfig
-     * @param null           $execTimeout
-     */
-    public function __construct(MemcacheConfig $memcacheConfig = null, $execTimeout = null)
+    public function __construct(Pool $pool)
     {
-        if (is_null($memcacheConfig)) {
-            $memcacheConfig = new MemcacheConfig();
-        }
-        $this->memcacheConfig = $memcacheConfig;
-        $this->execTimeout    = $execTimeout;
+        $this->pool = $pool;
     }
 
-    /**
-     * 获取协程客户端.
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return MemcacheClient
-     */
-    private function getClient(): MemcacheClient
-    {
-        if (!$this->memcachePool) {
-            $this->memcachePool = new MemcachePool($this->memcacheConfig);
-        }
-
-        // 协程结束自动回收链接
-        $coroutineId = Coroutine::getuid();
-        if (!isset($this->memcacheContext[$coroutineId])) {
-            $this->memcacheContext[$coroutineId] = $this->memcachePool->getObj();
-            defer(function () use ($coroutineId) {
-                $this->memcachePool->recycleObj($this->memcacheContext[$coroutineId]);
-            });
-        }
-
-        return $this->memcacheContext[$coroutineId];
-    }
 
     /**
-     * 获取缓存.
-     * @param  string             $key
-     * @param  null               $default
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return mixed
+     * @param string $key
+     * @param null $default
+     * @return false|mixed
+     * @throws PoolEmpty
+     * @throws \Throwable
      */
     public function get($key, $default = null)
     {
-        $client = $this->getClient();
-
-        try {
-            return $client->get($key, $this->execTimeout);
-        } catch (CacheException $cacheException) {
-            if ($cacheException->getCode() == Status::STAT_KEY_NOTFOUND) {
-                return $default;
-            }
-
-            throw $cacheException;
-        }
+        return $this->pool->invoke(function (\EasySwoole\Memcache\Memcache $memcache) use ($key, $default) {
+            return $memcache->get($key) ?? $default;
+        });
     }
 
     /**
-     * 设置缓存.
-     * @param  string             $key
-     * @param  mixed              $value
-     * @param  int|null           $ttl
-     * @throws CacheException
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return bool
+     * @param string $key
+     * @param mixed $value
+     * @param null $ttl
+     * @return bool|mixed
+     * @throws PoolEmpty
+     * @throws \Throwable
      */
     public function set($key, $value, $ttl = null)
     {
-        $client = $this->getClient();
-
-        return $client->set($key, $value, $ttl, $this->execTimeout);
+        return $this->pool->invoke(function (\EasySwoole\Memcache\Memcache $memcache) use ($key, $value, $ttl) {
+            return $memcache->set($key, $value, $ttl);
+        });
     }
 
     /**
-     * 删除缓存.
-     * @param  string             $key
-     * @throws CacheException
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return bool
+     * @param string $key
+     * @return bool|mixed
+     * @throws PoolEmpty
+     * @throws \Throwable
      */
     public function delete($key)
     {
-        $client = $this->getClient();
-
-        return $client->delete($key, $this->execTimeout);
+        return $this->pool->invoke(function (\EasySwoole\Memcache\Memcache $memcache) use ($key) {
+            return $memcache->delete($key);
+        });
     }
 
     /**
-     * 清空缓存.
-     * @throws CacheException
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return bool
+     * @return bool|mixed
+     * @throws PoolEmpty
+     * @throws \Throwable
      */
     public function clear()
     {
-        $client = $this->getClient();
-
-        return $client->flush(null, $this->execTimeout);
+        return $this->pool->invoke(function (\EasySwoole\Memcache\Memcache $memcache) {
+            return $memcache->flush();
+        });
     }
 
     /**
-     * 缓存是否存在.
-     * @param  string             $key
-     * @throws CacheException
-     * @throws PoolObjectNumError
-     * @throws Throwable
-     * @return bool
+     * @param string $key
+     * @return bool|mixed
+     * @throws PoolEmpty
+     * @throws \Throwable
      */
     public function has($key)
     {
-        $client = $this->getClient();
+        return $this->pool->invoke(function (\EasySwoole\Memcache\Memcache $memcache) use ($key) {
+            $reqPack = new Package(['opcode' => Opcode::OP_GET, 'key' => $key]);
+            $resPack = $memcache->sendCommand($reqPack);
 
-        try {
-            $client->get($key, $this->execTimeout);
-
-            return true;
-        } catch (CacheException $cacheException) {
-            if ($cacheException->getCode() == Status::STAT_KEY_NOTFOUND) {
+            if ($resPack->getStatus() === Status::STAT_KEY_NOTFOUND) {
                 return false;
             }
 
-            throw $cacheException;
-        }
+            return true;
+        });
     }
 }
