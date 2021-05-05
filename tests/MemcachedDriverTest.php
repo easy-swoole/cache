@@ -13,54 +13,41 @@
 namespace EasySwoole\Cache\Test;
 
 use EasySwoole\Cache\Cache;
-use EasySwoole\Cache\Config\MemcacheConfig;
 use EasySwoole\Cache\Drivers\Memcache;
+use EasySwoole\Memcache\Config;
+use EasySwoole\MemcachePool\Pool;
 use PHPUnit\Framework\TestCase;
 
 class MemcachedDriverTest extends TestCase
 {
-    private $cache;
+    private static $cache;
 
-    /**
-     * SwooleTableDriverTest constructor.
-     * @param  null|string                                $name
-     * @param  array                                      $data
-     * @param  string                                     $dataName
-     * @throws \EasySwoole\Cache\Exception\CacheException
-     */
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-        // Memcache的Config可以同时配置链接池相关的设置项
-        $memcacheDriver = new Memcache((new MemcacheConfig([
-
-            // 链接配置项
-            'host'              => '127.0.0.1',  // 默认是连接本地Memcache
-            'port'              => 11211,        // 默认的端口
-
-            // 链接池配置项
-            'intervalCheckTime' => 30 * 1000,   // 池对象回收检测周期
-            'maxIdleTime'       => 15,          // 连接最大空闲时间(超时释放)
-            'maxObjectNum'      => 20,          // 池最大连接象数量
-            'minObjectNum'      => 5,           // 保持的最小连接数量
-            'getObjectTimeout'  => 3.0,          // 池为空时获取连接最大等待时间
-
+        $pool = (new Pool(new Config([
+            'host' => '127.0.0.1'
         ])));
+        $driver = new Memcache($pool);
+        Cache::instance()->addDriver($driver, 'memcache');
+        self::$cache = Cache::instance()->getDriver('memcache');
+    }
 
-        Cache::instance()->addDriver($memcacheDriver, 'memcache');
-        $this->cache = Cache::instance()->getDriver('memcache');
+    public function testGet()
+    {
+        $this->assertEquals('no', self::$cache->get('key1', 'no'));
     }
 
     public function testSet()
     {
-        $this->cache->set('key', 1);
-        $this->assertEquals(1, $this->cache->get('key'));
+        self::$cache->set('key', 1);
+        $this->assertEquals(1, self::$cache->get('key'));
     }
 
     public function testHas()
     {
         Cache::set('has', 3);
         $this->assertEquals(true, Cache::has('has'));
+        $this->assertEquals(false, Cache::has('has1'));
     }
 
     public function testDelete()
